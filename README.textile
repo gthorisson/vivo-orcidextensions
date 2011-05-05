@@ -6,7 +6,7 @@ h2. What is it?
 
 A set of extensions for the VIVO semantic platform, created by ORCID as part of the "VIVO Collaborative Research Projects Program":http://www.vivoweb.org/blog/2011/01/award-announcement-vivo-collaborative-research-projects-program
 
-https://github.com/gthorisson/vivo-orcidextensions
+"https://github.com/gthorisson/vivo-orcidextensions":https://github.com/gthorisson/vivo-orcidextensions
 
 
--
+
