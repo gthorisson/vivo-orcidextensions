@@ -8,5 +8,6 @@ A set of extensions for the VIVO semantic platform, created by ORCID as part of 
 
 "https://github.com/gthorisson/vivo-orcidextensions":https://github.com/gthorisson/vivo-orcidextensions
 
+h2. More information
 
-
+See the "project wiki":wiki for details
