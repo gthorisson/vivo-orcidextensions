@@ -10,4 +10,4 @@ A set of extensions for the VIVO semantic platform, created by ORCID as part of 
 
 h2. More information
 
-See the "project wiki":wiki for details
+See the "project wiki":https://github.com/gthorisson/vivo-orcidextensions/wiki for details
