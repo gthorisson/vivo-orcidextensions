@@ -13,13 +13,35 @@
 
     <#local linkedIndividual>
         <#if statement.infoResource??>
-            <a href="${profileUrl(statement.infoResource)}">${statement.infoResourceName}</a>
+            <a href="${profileUrl(statement.infoResource)}">${statement.infoResourceName}</a>        
         <#else>
             <#-- This shouldn't happen, but we must provide for it -->
             <a href="${profileUrl(statement.authorship)}">missing information resource</a>
-        </#if>
+        </#if>     
     </#local>
 
-    ${linkedIndividual} <@dt.yearSpan "${statement.dateTime!}" />
+   ${linkedIndividual}
+
+    <#if statement.dateTime??>        
+     <@dt.yearSpan "${statement.dateTime!}" />
+    </#if>
+
+    <#if statement.publicationVenue??>
+      in <i>${statement.publicationVenueName}</i>
+    </#if>
+
+    <#if statement.volume??>
+       <b>${statement.volume}</b>
+    </#if>
+
+    <#if statement.issue??>
+      (${statement.issue})
+    </#if>
+
+    <#if statement.doi??>
+    doi:<a href="http://dx.doi.org/${statement.doi}">${statement.doi}</a>
+    </#if>
+                        
+        
 
 </#macro>

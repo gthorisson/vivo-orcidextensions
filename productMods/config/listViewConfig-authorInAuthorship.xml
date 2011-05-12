@@ -8,16 +8,33 @@
         PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;    
         PREFIX core: &lt;http://vivoweb.org/ontology/core#&gt;
         PREFIX afn:  &lt;http://jena.hpl.hp.com/ARQ/function#&gt;
+        PREFIX bibo:  &lt;http://purl.org/ontology/bibo/&gt;
         
         SELECT DISTINCT ?authorship             
                         ?infoResource ?infoResourceName 
-                        ?dateTime WHERE {
+                        ?dateTime
+						?subject
+						?publicationVenue
+						 ?doi ?volume ?issue
+						WHERE {
             ?subject ?property ?authorship  
             OPTIONAL { ?authorship core:linkedInformationResource ?infoResource .                      
                        ?infoResource rdfs:label ?infoResourceName                                         
                        OPTIONAL { ?infoResource core:dateTimeValue ?dateTimeValue .
                                   ?dateTimeValue core:dateTime ?dateTime  
-                       } 
+                       }
+	                   OPTIONAL {
+					  	       ?infoResource core:hasPublicationVenue ?publicationVenue
+		               }
+		               OPTIONAL {
+          		            ?infoResource bibo:doi  ?doi .
+					   }
+		               OPTIONAL {
+         	                ?infoResource bibo:volume ?volume .
+					   }
+		               OPTIONAL {
+                  		    ?infoResource bibo:issue ?issue .
+                       }
             }                                                           
         } ORDER BY DESC(?dateTime) ?infoResourceName   
     </query-base>
@@ -26,24 +43,46 @@
         PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;    
         PREFIX core: &lt;http://vivoweb.org/ontology/core#&gt;
         PREFIX afn:  &lt;http://jena.hpl.hp.com/ARQ/function#&gt;
+        PREFIX bibo:  &lt;http://purl.org/ontology/bibo/&gt;
+		PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
         
         SELECT DISTINCT ?subclass 
                         ?authorship
-                        ?infoResource ?infoResourceName 
-                        ?dateTime WHERE {
+                        ?infoResource
+                        ?infoResourceName 
+                        ?dateTime
+              	        ?publicationVenue ?publicationVenueName
+						?doi ?volume ?issue
+						?subclassName
+        WHERE {
             ?subject ?property ?authorship  
-            OPTIONAL { ?authorship core:linkedInformationResource ?infoResource .                      
-                       ?infoResource rdfs:label ?infoResourceName 
+            OPTIONAL { ?authorship core:linkedInformationResource ?infoResource .
+                       ?infoResource rdfs:label ?infoResourceName .
                        OPTIONAL { ?subclass rdfs:subClassOf core:InformationResource .
-                                  ?infoResource a ?subclass  
+                                  ?infoResource a ?subclass .
                        }                                            
                        OPTIONAL { ?infoResource core:dateTimeValue ?dateTimeValue .
                                   ?dateTimeValue core:dateTime ?dateTime  
-                       } 
+                       }					   
+	                   OPTIONAL {
+					  	       ?infoResource core:hasPublicationVenue ?publicationVenue .
+							   ?publicationVenue rdfs:label ?publicationVenueName
+		               }
+		               OPTIONAL {
+          		            ?infoResource bibo:doi  ?doi .
+					   }
+		               OPTIONAL {
+         	                ?infoResource bibo:volume ?volume .
+					   }
+		               OPTIONAL {
+                  		    ?infoResource bibo:issue ?issue .
+                       }
+					   
             }                                                           
         } ORDER BY ?subclass DESC(?dateTime) ?infoResourceName   
     </query-collated>
 
+<!--
     <query-construct>
         PREFIX core: &lt;http://vivoweb.org/ontology/core#&gt;
         PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;    
@@ -105,8 +144,11 @@
             ?authorship core:linkedInformationResource ?infoResource .
             ?infoResource core:dateTimeValue ?dateTimeValue .
             ?dateTimeValue core:dateTime ?dateTime  
+			
         } 
     </query-construct>
+	
+	-->
     
     <template>propStatement-authorInAuthorship.ftl</template>
 </list-view-config>

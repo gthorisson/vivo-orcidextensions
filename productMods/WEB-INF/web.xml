@@ -4,6 +4,9 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
   version="2.4">
+  	
+    <display-name>VIVO + ORCID extensions</display-name>
+
 
   <!-- Environment variables for the Vitro web application -->
   <!-- Example: -->
@@ -282,6 +285,38 @@
     <url-pattern>/*</url-pattern>
     <dispatcher>request</dispatcher>
   </filter-mapping>
+
+<!-- JRuby-Rack config to handle JRuby extensions -->  
+  	<context-param>
+	  <param-name>gem.path</param-name>
+	  <param-value>../../../../../home/gthorisson/jruby-1.5.6/lib/ruby/gems/1.8</param-value>
+	</context-param>
+	<context-param>
+	  <param-name>jruby.rack.debug.load</param-name>
+	  <param-value>true</param-value>
+	</context-param>
+	<context-param>
+ 		 <param-name>jruby.min.runtimes</param-name>
+  		<param-value>1</param-value>
+	</context-param>
+	<context-param>
+	  <param-name>jruby.max.runtimes</param-name>
+	  <param-value>1</param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>RackFilter</filter-name>
+		<filter-class>org.jruby.rack.RackFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>RackFilter</filter-name>
+		<url-pattern>/jruby/*</url-pattern>
+	</filter-mapping>
+	
+	<listener>
+		<listener-class>org.jruby.rack.RackServletContextListener</listener-class>
+	</listener>
+  
   
   <!--  Spring setup ****************************************************  -->
 <!--
@@ -311,6 +346,8 @@
     
     -->
   <!-- Servlets ********************************************************** -->
+
+
   <servlet>
     <!--adding only trimSpaces param to defaults to clean up html output-->
     <servlet-name>jsp</servlet-name>
@@ -1591,6 +1628,7 @@
     <servlet-name>GetObjectClasses</servlet-name>
     <url-pattern>/admin/getObjectClasses</url-pattern>
   </servlet-mapping>
+
 
   <!-- ==================== tag libraries ============================== -->
   <jsp-config>

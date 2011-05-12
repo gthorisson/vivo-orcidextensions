@@ -5,7 +5,6 @@
 <#include "individual-setup.ftl">
     
 <section id="individual-intro" class="vcard person" role="region">
-
     <section id="share-contact" role="region"> 
         <#-- Image -->           
         <#assign individualImage>
@@ -131,6 +130,51 @@
     </section>
     
 </section>
+
+
+<!--    
+
+<section>
+
+<#if editable>    
+
+<h2>Add publications</h2>
+   
+            <table border="0" cellspacing="0" cellpadding="10" style="width: 600px;">
+             <tbody>
+              <tr>
+                <td valign="top" style="border-style: dashed;">
+                  <img src="http://images.orcidsandbox.org/WOK46/images/RID/addDOIlogo.gif" alt="Digital Object Identifier logo" title="Digital Object Identifier logo" width="253" height="28"/>
+                  <div class="addBox">
+                    <dl>
+                      <dt>                          
+                        <form action="/jruby/bibliosearch" method="GET" accept-charset="utf-8">                                 
+                          DOI search:<input type="text" size="25" name="query" value="${individual.nameStatement.value}"/> <input type="submit" value="Submit" />                                     
+                        </form>                      
+                      </dt>
+                    </dl>	                  
+                  </div>
+                </td>
+                <td valign="top" style="border-style: dashed;">
+                  <img src="http://images.orcidsandbox.org/WOK46/images/RID/addRISlogo.gif" alt="Upload RIS File logo" title="Upload RIS File logo" width="253" height="28"/>
+                  <div class="addBox">
+                    <dl>
+                      <dt>
+                        <a href="#" style="color:middleblue;" onClick="document.forms['pubList'].action = 'ViewFileUpload.action';document.forms['pubList'].submit();return false;">Upload an RIS file (from EndNote, RefMan, or other reference software)</a>
+                      </dt>
+                   </dl>				  
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            </table>
+    
+</section>
+
+</#if>
+-->
+
+
 <#assign nameForOtherGroup = "other"> <#-- used by both individual-propertyGroupMenu.ftl and individual-properties.ftl -->
 
 <#-- Property group menu -->

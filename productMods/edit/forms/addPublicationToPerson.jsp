@@ -122,6 +122,8 @@ core:informationResourceInAuthorship (InformationResource : Authorship) - invers
 
 <c:set var="vivoOnt" value="http://vivoweb.org/ontology" />
 <c:set var="vivoCore" value="${vivoOnt}/core#" />
+<c:set var="bibo" value="http://purl.org/ontology/bibo/" />
+<c:set var="dc" value="http://purl.org/dc/terms/" />
 <c:set var="rdfs" value="<%= VitroVocabulary.RDFS %>" />
 <c:set var="label" value="${rdfs}label" />
 <c:set var="infoResourceClassUri" value="${vivoCore}InformationResource" />
@@ -137,9 +139,35 @@ SPARQL queries for existing values. --%>
     ?pubUri <${label}> ?title .   
 </v:jsonset>
 
+<%-- one of several additional bibinfo triples, which should feed into the newly-created pub record.  --%>
+<v:jsonset var="newPubVolumeAssertion">
+     ?pubUri <${bibo}volume> ?pubVolume .
+</v:jsonset>
+<v:jsonset var="newPubIssueAssertion">
+     ?pubUri <${bibo}issue> ?pubIssue .
+</v:jsonset>
+<v:jsonset var="newPubPageStartAssertion">
+     ?pubUri <${bibo}pageStart> ?pubPageStart .
+</v:jsonset>
+<v:jsonset var="newPubPageEndAssertion">
+     ?pubUri <${bibo}pageEnd> ?pubPageEnd .
+</v:jsonset>
+<v:jsonset var="newPubDOIAssertion">
+     ?pubUri <${bibo}doi> ?pubDOI .
+</v:jsonset>
+<v:jsonset var="newPubDateTimeAssertion">
+     ?pubUri <${vivoCore}dateTimeValue> ?pubDateTimeUri .
+</v:jsonset>
+
+
+
+
+
+
 <%-- This applies to both a new and an existing publication --%>
 <v:jsonset var="n3ForNewAuthorship">
     @prefix core: <${vivoCore}> .
+    @prefix bibo: <${bibo}> .
     
     ?authorshipUri a core:Authorship ;
                    core:linkedAuthor ?person .  
@@ -149,6 +177,7 @@ SPARQL queries for existing values. --%>
 
 <v:jsonset var="n3ForExistingPub">
     @prefix core: <${vivoCore}> .
+    @prefix bibo: <${bibo}> .
         
     ?authorshipUri core:linkedInformationResource ?pubUri .
     ?pubUri core:informationResourceInAuthorship ?authorshipUri .
@@ -156,6 +185,7 @@ SPARQL queries for existing values. --%>
 
 <v:jsonset var="n3ForNewPub">
     @prefix core: <${vivoCore}> .
+    @prefix bibo: <${bibo}> .
     
     ?pubUri a ?pubType ;
             <${label}> ?title .
@@ -163,6 +193,37 @@ SPARQL queries for existing values. --%>
     ?authorshipUri core:linkedInformationResource ?pubUri .
     ?pubUri core:informationResourceInAuthorship ?authorshipUri .               
 </v:jsonset>
+
+<!-- Creating a new datetime for the pub -->
+<v:jsonset var="n3ForNewPubDateTime">
+    @prefix core: <${vivoCore}> .
+    @prefix bibo: <${bibo}> .
+    @prefix rdfs: <${rdfs}> .
+    
+    ?pubDateTimeUri a core:DateTimeValue ;
+                    <${vivoCore}dateTime> ?pubDateTime^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+                    <${vivoCore}dateTimePrecision> ?pubDateTimePrecisionUri .
+</v:jsonset>
+
+
+<%-- Creating a new publication venue - aka journal--%>
+<v:jsonset var="n3ForExistingVenue">
+    @prefix core: <${vivoCore}> .
+    @prefix bibo: <${bibo}> .
+    @prefix rdfs: <${rdfs}> .
+
+     ?venueUri a ?venueTypeUri ;
+               <${label}> ?venueTitle .
+
+     ?pubUri core:hasPublicationVenue ?venueUri .
+     ?venueUri core:publicationVenueFor ?pubUri .
+</v:jsonset>
+<%-- May have additional assertions describing the venue --%>
+<v:jsonset var="existingVenueISSNAssertion">
+     ?venueUri <${bibo}issn> ?venueISSN .
+</v:jsonset>
+
+
 
 
 <c:set var="publicationsClassGroupUri" value="${vivoOnt}#vitroClassGrouppublications" />
@@ -180,16 +241,20 @@ SPARQL queries for existing values. --%>
     
     "n3required"    : [ "${n3ForNewAuthorship}" ],
     
-    "n3optional"    : [ "${n3ForExistingPub}", "${n3ForNewPub}",
-                        "${newPubNameAssertion}", "${newPubTypeAssertion}" ],        
+    "n3optional"    : [ "${n3ForExistingPub}", "${n3ForNewPub}", "${n3ForExistingVenue}",
+                        "${newPubNameAssertion}", "${newPubTypeAssertion}",
+                        "${n3ForNewPubDateTime}","${newPubDateTimeAssertion}","${newPubVolumeAssertion}",
+                        "${newPubIssueAssertion}", "${newPubPageStartAssertion}",
+                        "${newPubPageEndAssertion}", "${newPubDOIAssertion}","$existingVenueISSNAssertion" ],        
                                                                                         
     "newResources"  : { "authorshipUri" : "${defaultNamespace}",
-                        "pubUri" : "${defaultNamespace}" },
+                        "pubUri" : "${defaultNamespace}",
+                        "pubDateTimeUri" : "${defaultNamespace}" },
 
     "urisInScope"    : { },
     "literalsInScope": { },
-    "urisOnForm"     : [ "pubUri", "pubType" ],
-    "literalsOnForm" : [ "title" ],
+    "urisOnForm"     : [ "pubUri", "pubType", "pubDateTimeUri", "pubDateTimePrecisionUri", "venueUri","venueTypeUri" ],
+    "literalsOnForm" : [ "title", "pubDateTime", "pubVolume","pubIssue","pubPageStart","pubPageEnd","pubDOI","venueTitle","venueISSN" ],
     "filesOnForm"    : [ ],
     "sparqlForLiterals" : { },
     "sparqlForUris" : {  },
@@ -207,6 +272,72 @@ SPARQL queries for existing values. --%>
          "rangeLang"        : "",
          "assertions"       : [ "${n3ForNewPub}" ]
       },   
+      "pubDateTime" : {
+         "newResource"      : "false",
+         "validators"       : [ "datatype:${stringDatatypeUriJson}" ],
+         "optionsType"      : "UNDEFINED",
+         "literalOptions"   : [ ],
+         "predicateUri"     : "",
+         "objectClassUri"   : "",
+         "rangeDatatypeUri" : "${stringDatatypeUriJson}",
+         "rangeLang"        : "",
+         "assertions"       : [ "${n3ForNewPubDateTime}" ]
+      },      
+      "pubVolume" : {
+         "newResource"      : "false",
+         "validators"       : [ "datatype:${stringDatatypeUriJson}" ],
+         "optionsType"      : "UNDEFINED",
+         "literalOptions"   : [ ],
+         "predicateUri"     : "",
+         "objectClassUri"   : "",
+         "rangeDatatypeUri" : "${stringDatatypeUriJson}",
+         "rangeLang"        : "",
+         "assertions"       : [ "${newPubVolumeAssertion}" ]
+      },      
+      "pubIssue" : {
+         "newResource"      : "false",
+         "validators"       : [ "datatype:${stringDatatypeUriJson}" ],
+         "optionsType"      : "UNDEFINED",
+         "literalOptions"   : [ ],
+         "predicateUri"     : "",
+         "objectClassUri"   : "",
+         "rangeDatatypeUri" : "${stringDatatypeUriJson}",
+         "rangeLang"        : "",
+         "assertions"       : [ "${newPubIssueAssertion}" ]
+      },      
+      "pubPageStart" : {
+         "newResource"      : "false",
+         "validators"       : [ "datatype:${stringDatatypeUriJson}" ],
+         "optionsType"      : "UNDEFINED",
+         "literalOptions"   : [ ],
+         "predicateUri"     : "",
+         "objectClassUri"   : "",
+         "rangeDatatypeUri" : "${stringDatatypeUriJson}",
+         "rangeLang"        : "",
+         "assertions"       : [ "${newPubPageStartAssertion}" ]
+      },      
+      "pubPageEnd" : {
+         "newResource"      : "false",
+         "validators"       : [ "datatype:${stringDatatypeUriJson}" ],
+         "optionsType"      : "UNDEFINED",
+         "literalOptions"   : [ ],
+         "predicateUri"     : "",
+         "objectClassUri"   : "",
+         "rangeDatatypeUri" : "${stringDatatypeUriJson}",
+         "rangeLang"        : "",
+         "assertions"       : [ "${newPubPageEndAssertion}" ]
+      },      
+      "pubDOI" : {
+         "newResource"      : "false",
+         "validators"       : [ "datatype:${stringDatatypeUriJson}" ],
+         "optionsType"      : "UNDEFINED",
+         "literalOptions"   : [ ],
+         "predicateUri"     : "",
+         "objectClassUri"   : "",
+         "rangeDatatypeUri" : "${stringDatatypeUriJson}",
+         "rangeLang"        : "",
+         "assertions"       : [ "${newPubDOIAssertion}" ]
+      },      
       "pubType" : {
          "newResource"      : "false",
          "validators"       : [ ],
@@ -228,7 +359,51 @@ SPARQL queries for existing values. --%>
          "rangeDatatypeUri" : "",
          "rangeLang"        : "",         
          "assertions"       : ["${n3ForExistingPub}"]
-      }
+      },
+      "pubDateTimeUri" : {
+         "newResource"      : "true",
+         "validators"       : [ ],
+         "optionsType"      : "UNDEFINED",
+         "literalOptions"   : [ ],
+         "predicateUri"     : "",
+         "objectClassUri"   : "${personClassUriJson}",
+         "rangeDatatypeUri" : "",
+         "rangeLang"        : "",         
+         "assertions"       : ["${newPubDateTimeAssertion}", "${n3ForNewPubDateTime}" ]
+      },
+      "venueUri" : {
+         "newResource"      : "false",
+         "validators"       : [ ],
+         "optionsType"      : "UNDEFINED",
+         "literalOptions"   : [ ],
+         "predicateUri"     : "",
+         "objectClassUri"   : "",
+         "rangeDatatypeUri" : "",
+         "rangeLang"        : "",
+         "assertions"       : [ "${n3ForExistingVenue}" ]
+      },            
+      "venueTitle" : {
+         "newResource"      : "false",
+         "validators"       : ["datatype:${stringDatatypeUriJson}"  ],
+         "optionsType"      : "UNDEFINED",
+         "literalOptions"   : [ ],
+         "predicateUri"     : "",
+         "objectClassUri"   : "",
+         "rangeDatatypeUri" : "${stringDatatypeUriJson}",
+         "rangeLang"        : "",
+         "assertions"       : [ "${n3ForExistingVenue}" ]
+      },      
+      "venueISSN" : {
+         "newResource"      : "false",
+         "validators"       : ["datatype:${stringDatatypeUriJson}" ],
+         "optionsType"      : "UNDEFINED",
+         "literalOptions"   : [ ],
+         "predicateUri"     : "",
+         "objectClassUri"   : "",
+         "rangeDatatypeUri" : "${stringDatatypeUriJson}",
+         "rangeLang"        : "",
+         "assertions"       : [ "${existingVenueISSNAssertion}" ]
+      },      
   }
 }
 </c:set>
@@ -252,13 +427,17 @@ SPARQL queries for existing values. --%>
     List<String> customJs = new ArrayList<String>(Arrays.asList(JavaScript.JQUERY_UI.path(),
                                                                 JavaScript.CUSTOM_FORM_UTILS.path(),
                                                                 "/js/browserUtils.js",
-                                                                "/edit/forms/js/customFormWithAutocomplete.js"                                                    
+                                                                "/edit/forms/js/customFormWithAutocomplete.js",
+                                                                "/edit/forms/js/lookupPublicationInExternalSystem.js",
+                                                                "/js/jquery_plugins/jquery.rdfquery.core-1.0.js",
+                                                                "/js/jquery_plugins/jquery.dataTables.min.js"
                                                                ));            
     request.setAttribute("customJs", customJs);
     
     List<String> customCss = new ArrayList<String>(Arrays.asList(Css.JQUERY_UI.path(),
                                                                  Css.CUSTOM_FORM.path(),
-                                                                 "/edit/forms/css/customFormWithAutocomplete.css"
+                                                                 "/edit/forms/css/customFormWithAutocomplete.css",
+                                                                 "/css/jquery_plugins/demo_table.css"
                                                                 ));                                                                                                                                   
     request.setAttribute("customCss", customCss); 
 %>
@@ -274,26 +453,88 @@ SPARQL queries for existing values. --%>
 <%-- DO NOT CHANGE IDS, CLASSES, OR HTML STRUCTURE IN THIS FORM WITHOUT UNDERSTANDING THE IMPACT ON THE JAVASCRIPT! --%>
 <form id="addPublicationForm" class="customForm noIE67"  action="<c:url value="/edit/processRdfForm2.jsp"/>" >
 
+
     <p class="inline"><v:input type="select" label="Publication Type ${requiredHint}" name="pubType" id="typeSelector" /></p>
     
+    
     <div class="fullViewOnly">
+
+
+       <h3>Look up publication in VIVO by title, or create a new publication from scratch</h3>
         
-	   <p><v:input type="text" id="relatedIndLabel" name="title" label="Title ${requiredHint}" cssClass="acSelector" size="50" /></p>
+  	   <p><v:input type="text" id="relatedIndLabel" name="title" label="Title ${requiredHint}" cssClass="acSelector" size="50" /></p>
 
 	    <div class="acSelection">
 	        <%-- RY maybe make this a label and input field. See what looks best. --%>
 	        <p class="inline"><label></label><span class="acSelectionInfo"></span> <a href="<c:url value="/individual?uri=" />" class="verifyMatch">(Verify this match)</a></p>
 	        <input type="hidden" id="pubUri" name="pubUri" class="acUriReceiver" value="" /> <!-- Field value populated by JavaScript -->
 	    </div>
-    </div>   
-     
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>OR</b>
+
+       <h3>Look up publication in external system</h3>
+	    <!--  [perhaps hide this and only reveal if user clicks link or button]  -->
+	    <!-- add selector for CrossRef / PubMed / IEEE etc. - how to make this configurable?? -->
+	           
+    <!-- figure how to only show this IF its an article?
+        more generally: IF article THEN show CrossRef / Pubmed / etc options
+                        IF dataset THEN show DataCite
+                        etc.          
+     -->
+	  <p>
+	    <v:input type="text" id="externalPubLookupTerms" name="externalPubLookupTerms" label="Enter search terms" size="50" />	    
+
+        <a href="#" id="externalPubLookupSubmit"> <img src="http://images.orcidsandbox.org/WOK46/images/RID/search.gif" alt="Search" title="Search" /></a>
+      </p>
+      
+      <div id="externalPubLookupStatus" align="left" style="display:none;">
+        <!-- <img src="http://images.orcidsandbox.org/WOK46/images/RID/working.gif" alt="working" title="working" />-->
+        <img src="/images/visualization/ajax-loader-indicator.gif" alt="working" title="working" />
+        <span></span>
+      </div>
+            
+      <div class="externalPubLookupListing" id="externalPubLookupResultListing"></div>
+      
+      <pre id="externalPubLookupDetailsTriples" style="display: block">
+      
+      </pre>
+      <div id="externalPubLookupDetails" style="display: none">
+      <p><b>Details for selected publication:</b></p>
+
+	    <input type="hidden" id="venueUri" name="venueUri" label="Journal URI" size="30" />	    
+	    <v:input type="text" id="venueTitle" name="venueTitle" label="Published in" size="30" />	    
+	    ISSN: <input type="text" id="venueISSN" name="venueISSN" label="ISSN" size="30" />	    
+	    <input type="hidden" id="venueTypeUri" name="venueTypeUri" label="Journal type URI" size="30" />	    
+      
+	    <v:input type="text" id="pubDateTime" name="pubDateTime" label="Date published" size="30" />
+        <input type="hidden" id="pubDateTimeUri" name="pubDateTimeUri" value="" />
+	    <input type="hidden" id="pubDateTimePrecisionUri" name="pubDateTimePrecisionUri" label="Datetime precision" size="30" />
+	    <v:input type="text" id="pubVolume" name="pubVolume" label="Volume" size="30" />	    
+	    <v:input type="text" id="pubIssue" name="pubIssue" label="Issue" size="30" />	    
+	    <v:input type="text" id="pubPageStart" name="pubPageStart" label="Page start" size="30" />	    
+	    <v:input type="text" id="pubPageEnd" name="pubPageEnd" label="Page end" size="30" />	    
+	    <v:input type="text" id="pubDOI" name="pubDOI" label="DOI" size="50" />
+	    <!-- ? generate author fields dynamically ? OR just print multiple lines to textarea, a la CiteULike..  -->
+
+
+      <p><b>Authors:</b></p>
+ [...]
+      </div>
+ 
+	    
+    </div>
+    
     <p class="submit"><v:input type="submit" id="submit" value="Publication" cancel="true" /></p>
+
+
     
     <p id="requiredLegend" class="requiredHint">* required fields</p>
 </form>
 
 <c:url var="acUrl" value="/autocomplete?tokenize=true&stem=true" />
 <c:url var="sparqlQueryUrl" value="/ajax/sparqlQuery" />
+<c:url var="externalLookupUrl" value="/jruby/bibliosearch" />
+
 
 <%-- Must be all one line for JavaScript. --%>
 <c:set var="sparqlForAcFilter">
