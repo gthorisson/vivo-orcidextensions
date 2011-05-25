@@ -428,7 +428,7 @@ SPARQL queries for existing values. --%>
                                                                 JavaScript.CUSTOM_FORM_UTILS.path(),
                                                                 "/js/browserUtils.js",
                                                                 "/edit/forms/js/customFormWithAutocomplete.js",
-                                                                "/edit/forms/js/lookupPublicationInExternalSystem.js",
+                                                                "/edit/forms/js/addPublicationInExternalSystem.js",
                                                                 "/js/jquery_plugins/jquery.rdfquery.core-1.0.js",
                                                                 "/js/jquery_plugins/jquery.dataTables.min.js"
                                                                ));            
