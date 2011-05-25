@@ -1,0 +1,61 @@
+
+
+<form action="bibliosearch" method="GET" accept-charset="utf-8">
+	
+Enter search terms:	<input type="text" size="25" name="query" value="<%= params[:query] %>"/>
+	<p>
+		<input type="submit" value="Continue" /></p>
+
+</form>
+
+
+<% if @resultlist.size > 0 %>	
+
+<form action="bibliofetch" method="GET" accept-charset="utf-8">
+
+<p>
+  <input type="submit" value="Add selected pubs" />
+</p>
+
+
+<table cellspacing="2" cellpadding="1" border="0">
+	<thead>
+		<th><input type="checkbox" /></th>
+		<th>Select all</th>
+	</thead>
+  <tbody>
+<% @resultlist.each do |pub| %>
+  <tr>
+    <td nowrap="nowrap" valign="top" class="summary_recnum">
+        <input type="checkbox" name="doi[]" value="<%= pub['doi'] %>" />
+ [counter]
+    </td>
+    <td class="fullCitation">
+    	<%= pub['fullCitation'] %> doi:<a href="http://dx.doi.org/<%= pub['doi'] %>"><%= pub['doi'] %></a> Score: <%= pub['normalizedScore'] %>
+    </td>
+  </tr>
+
+<!--
+{"doi"=>"10.1093/nar/gkg052",
+ "score"=>2.2466438,
+ "normalizedScore"=>60,
+ "title"=>"The SNP Consortium website: past, present and future",
+ "fullCitation"=>
+  "Thorisson, G, 2003, 'The SNP Consortium website: past, present and future', <i>Nucleic Acids Research</i>, vol. 31, no. 1, pp. 124-127.",
+ "shortCitation"=>"(Thorisson 2003, pp. 124-127)",
+-->
+  
+<% end %>
+
+  </tbody>
+</table>
+
+</form>
+
+<% end %>
+
+<pre> 
+--- Request Environment 
+<% request.env.keys.sort.each do |k| %><%= k %> = <%= env[k] %>
+<% end %>
+</pre>

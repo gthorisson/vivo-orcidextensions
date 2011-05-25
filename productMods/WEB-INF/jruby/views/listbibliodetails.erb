@@ -1,0 +1,30 @@
+
+
+
+<table cellspacing="2" cellpadding="1" border="0">
+	<thead>
+		<th><input type="checkbox" /></th>
+		<th>Select all</th>
+	</thead>
+  <tbody>
+<% @bibliolist.each do |pub| %>
+  <tr>
+    <td nowrap="nowrap" valign="top" class="summary_recnum">
+<pre>
+	pub obj as JSON=<%= JSON.pretty_generate(pub) %>
+	
+</pre>    	
+    </td>		
+  </tr>
+  
+<% end %>
+
+  </tbody>
+</table>
+
+
+<pre>
+--- Request Environment
+<% request.env.keys.sort.each do |k| %><%= k %> = <%= env[k] %>
+<% end %>
+</pre>
