@@ -1,3 +1,22 @@
+#This code was created by ORCID as part of the VIVO Collaborative Research Projects Program.
+#
+#Author: Gudmundur A. Thorisson <gthorisson@gmail.com>
+#
+#See also https://github.com/gthorisson/vivo-orcidextensions
+#
+#
+#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+#ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+#WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+#DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+#FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+#DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+#SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+#CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+#OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+#OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
 require 'sinatra'
 require "sinatra/reloader" if development?
 
@@ -28,26 +47,6 @@ else
 end
 
 
-get '/' do
-  erb :root
-end
-
-post '/body' do
-  res = "Content-Type was: #{request.content_type.inspect}\n"
-  body = request.body.read
-  if body.empty?
-    status 400
-    res << "Post body empty\n"
-  else
-    res << "Post body was:\n#{body}\n"
-  end
-end
-
-get %r'.*/info' do
-  content_type 'text/plain; charset=utf-8'
-  erb :info
-end
-
 get '/jruby/env' do
   content_type 'text/plain; charset=utf-8'
   capture
@@ -73,19 +72,11 @@ get '/jruby/bibliosearch' do
                                                      :op      => "AND",
                                                      :expression => params[:query]}}
   
-    # TEMPORARY!! create array from retrieved JSON and pass this to a template for rendering
     #@resultlist = JSON.parse response.to_str
     return response.to_str
   end
   
   #return erb :listbibliosearchresults
-  
-  
-  # Return JSON string direct ly, for use in client-side UI
-  #res =  "\nFetching metadata via " + sigg_url
-  #res << "\n\n"
-  #res << response.to_str
-  # return res  
 end
 
 # Wrapper around the CrossRef metadata retrieval service
@@ -95,35 +86,18 @@ get '/jruby/bibliofetch' do
   # For reach DOI passed in, fetch full metadata from CrossRef
   puts "Got DOI list: #{params['doi']}"
   @bibliolist = []
- # doi_list = params['doi']
-  #if doi_list
-   # doi_list.each do|doi|
-      doi = params['doi']
+  doi = params['doi']
 
-      puts "retrieving metadata via #{url}#{doi}"
-      begin
+  puts "retrieving metadata via #{url}#{doi}"
+    begin
         response = RestClient.get url + doi, {:accept =>  "application/rdf+json"} #  "text/turtle"}
         #obj_from_json = JSON.parse(response.to_str)
         #@bibliolist.push(obj_from_json)
         return response.to_str
       rescue # try not blow up if the REST call doesn't return successfully
         puts "An error occurred when looking up #{doi}: #{$!}"
-        # Return 404 and abort?
-      end
- #   end
-#  end
-  
-  # TEMPORARY: pass array w/ pub metadata to template for rendering
-  #pp @bibliolist
-  #puts "Got metadata for #{@bibliolist.length} pubs. Returning as JSON array to caller"
-  #return erb :listbibliodetails
-  #return @bibliolist
-
-  
-  # TODO: Hand biblio RDF on to harvester for matching against current contents of VIVO store,
-  #       and then probably on to a separate controller which deals with that outcome and
-  #       presenting that to the user.
-  
+        # ToDo Return 404 and abort?
+    end
 end
 
 get '/jruby/testfwd' do
@@ -173,12 +147,12 @@ end
 
 
 
-# Wrapper around the PubMed query service
+# ToDo: Wrapper around the PubMed query service
 get '/jruby/api/bibliosearch/pubmed' do
   
 end
 
-# Wrapper around the PubMed metadata retrieval service
+# ToDo: Wrapper around the PubMed metadata retrieval service
 get '/api/bibliofetch/pubmed' do
   return "got params #{request.params[:id]}"
 

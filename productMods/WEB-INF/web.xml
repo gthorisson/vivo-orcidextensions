@@ -316,6 +316,9 @@
 	<listener>
 		<listener-class>org.jruby.rack.RackServletContextListener</listener-class>
 	</listener>
+
+<!-- JRuby-Rack config ends -->  
+
   
   
   <!--  Spring setup ****************************************************  -->

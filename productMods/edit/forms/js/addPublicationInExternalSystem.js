@@ -1,13 +1,40 @@
 
 /*
 
-[blurb about VIVO-ORCID collab project]
+This code was created by ORCID as part of the VIVO Collaborative Research Projects Program.
+
+Author: Gudmundur A. Thorisson <gthorisson@gmail.com>
+
+See also https://github.com/gthorisson/vivo-orcidextensions
+
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+/*
+
+This client-side JavaScript works with the form specified in addPublicationToPerson.jsp 
+and provides the following functionality:
+
+ - send a request to the external bibliographic system, retrieve the results and display in table
+ - for the publication the user selects from the table, retrieve full bibliographic
+   details from the external system and populate the form.
+   
 
 */
 
 
-
-// Set up Ajax request itself to be fired off when user clicks the Search button
+// Configure the Ajax request to be fired when user clicks the Search button
 $('#externalPubLookupSubmit').click( function(){ searchExternal() } );
 // OR hits the Enter key
 $('#externalPubLookupTerms').keypress(function(e) {	
@@ -17,15 +44,16 @@ $('#externalPubLookupTerms').keypress(function(e) {
 	}
 });
 
-//$('#externalPubLookupSubmit').click();
 		
+// The main Ajax function
 function searchExternal () {
       $('#externalPubLookupResultListing').empty(); // Remove any previous result listing
-      $('#externalPubLookupDetails').hide(); // Hide external pub details, user had previously clicked on a result listing entry
+      $('#externalPubLookupDetails').hide(); // Hide external pub details
 
       $('#externalPubLookupStatus > span').text('Searching CrossRef bibliographic metadata')
       $('#externalPubLookupStatus').show(); // Show progress indicator
       var queryString = $('#externalPubLookupTerms').val();
+      
 	  $.getJSON('/jruby/bibliosearch?',
 	  {
 		      query: queryString
@@ -38,9 +66,10 @@ function searchExternal () {
 	    	    	bibdata.push([item.fullCitation,item.doi,null]);	    	    		    	        
 	    	    });
 	    	    
-	    	    // ToDo: error handler, to catch 500 or other errors from external search service & display error msg to user
+	    	    // ToDo: error handling, nee to catch 500 or other non-200 responses from the external search service
+	    	    // and display an error msg to the user.
 	    	    
-   	            // Do DataTables magic and create table from data collected above
+   	            // Use the excellent DataTables plugin for jQuery to create a pretty table from data collected above
                 $('#externalPubLookupResultListing').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="externalPubTable"></table>' );
                 var oTable =  $('#externalPubTable').dataTable({
      	        	"bFilter": false,
@@ -68,36 +97,27 @@ function searchExternal () {
      	 	    	          $('#externalPubLookupStatus > span').text('Retrieving metadata for doi:'+doi)
      		    	          $('#externalPubLookupStatus').show(); // Show progress indicator again     		    	          
 
-     		    	    	  // ? can we set the pubType dropdown based on pub type from RDF? 
-     		    	    	  // retrieve & display full citation details as RDF
      		    	    	  $.get('/jruby/bibliofetch?doi=' + doi, function(bibdetails_rdf) {
-     		    	    		  //alert("success in retrieving external bibdata for DOI " + doi);
      		    	   	          $('#externalPubLookupStatus').hide(); // hide progress indicator
-     		    	   	               		    	    	  
-     		    	    	      // Create a mini-triplestore from the RDF we just retrieved
-     		    	    	 
-         		    	    	  //    var rdf = $('#externalPubLookupDetailsTriples').rdf()
-     		    	   	          //var databank = $.rdf.databank();
+
+        	    	    	   	  // Now that the bibliographic details are in hand, need to fill out form. The
+     		    	   	          // data are provided as RDF, so we create a mini-triplestore and pull out
+     		    	   	          // the stuff we need from there.
      			    	    	  var doi_url = 'http://dx.doi.org/' + doi;
-     			    	    	  //bibdetails_rdf = '{"http://dx.doi.org/10.1016/0304-4149(85)90322-9":{"http://purl.org/dc/terms/identifier":[{"type":"literal","value":"10.1016/0304-4149(85)90322-9"}],"http://www.w3.org/2002/07/owl#sameAs":[{"type":"uri","value":"info:doi/10.1016/0304-4149(85)90322-9"},{"type":"uri","value":"doi:10.1016/0304-4149(85)90322-9"}],"http://prismstandard.org/namespaces/basic/2.1/doi":[{"type":"literal","value":"10.1016/0304-4149(85)90322-9"}],"http://purl.org/ontology/bibo/doi":[{"type":"literal","value":"10.1016/0304-4149(85)90322-9"}],"http://purl.org/dc/terms/date":[{"type":"literal","value":"1985"}],"http://purl.org/ontology/bibo/volume":[{"type":"literal","value":"21"}],"http://prismstandard.org/namespaces/basic/2.1/volume":[{"type":"literal","value":"21"}],"http://purl.org/ontology/bibo/pageStart":[{"type":"literal","value":"52"}],"http://prismstandard.org/namespaces/basic/2.1/startingPage":[{"type":"literal","value":"52"}],"http://purl.org/dc/terms/title":[{"type":"literal","value":"On maximal and distributional coupling  Hermann Thorisson, Chalmers University of Technology, Sweden"}],"http://purl.org/dc/terms/publisher":[{"type":"literal","value":"Elsevier BV"}],"http://www.w3.org/1999/02/22-rdf-syntax-ns#type":[{"type":"uri","value":"http://purl.org/ontology/bibo/Article"}],"http://purl.org/dc/terms/isPartOf":[{"type":"uri","value":"http://id.crossref.org/issn/0304-4149"}]},"http://id.crossref.org/issn/0304-4149":{"http://purl.org/dc/terms/title":[{"type":"literal","value":"Stochastic Processes and their Applications"}],"http://purl.org/ontology/bibo/issn":[{"type":"literal","value":"0304-4149"}],"http://prismstandard.org/namespaces/basic/2.1/issn":[{"type":"literal","value":"0304-4149"}],"http://purl.org/dc/terms/hasPart":[{"type":"uri","value":"http://dx.doi.org/10.1016/0304-4149(85)90322-9"}],"http://www.w3.org/1999/02/22-rdf-syntax-ns#type":[{"type":"uri","value":"http://purl.org/ontology/bibo/Journal"}],"http://www.w3.org/2002/07/owl#sameAs":[{"type":"uri","value":"urn:issn:0304-4149"}],"http://purl.org/dc/terms/identifier":[{"type":"literal","value":"0304-4149"}]}}';
      			    	    	  var rdf = $.rdf().load($.parseJSON(bibdetails_rdf));
-     		    	    	       rdf.prefix('dc','http://purl.org/dc/terms/')
+     		    	    	      rdf.prefix('dc','http://purl.org/dc/terms/')
      		    	    	         .prefix('bibo','http://purl.org/ontology/bibo/')
      		    	    	         .prefix('prism','http://prismstandard.org/namespaces/basic/2.1/')
      		    	    	         .prefix('owl','http://www.w3.org/2002/07/owl#')
    		    	    	             .prefix('rdfs','http://www.w3.org/2000/01/rdf-schema#');
-
-     		    	   	          //databank.load(bibdetails_rdf);
-     		    	    	      //  	    .prefix('dc','http://purl.org/dc/terms/')
-     		    	    	      //          .prefix('bibo','http://purl.org/ontology/bibo/')     		    	    	                   ;
-     		    	    	      // .rdf().load(bibdata_full, {})
      		    	    	           		    	    		  
 
-     		    	    	      // Extract the triples we want by querying the RDF object in hand
-   		    	    	         
-     		    	    	      // ?? could set the pubtype field - a subclass assertion
-     		    	    	       
-     		    	    	      // Literals
+     		    	    	      // Extract the triples we want by querying the RDF object in hand. First
+     		    	    	      // let's do the literals.
+     		    	    	      
+     		    	    	      // ToDo: use the publication type from the RDF - a subclass assertion.
+      		    	    	      //    can we set the pubType dropdown based this?
+
      		    	    	       
             	    	          // Set pub title field
      		    	    	      rdf.where('<' + doi_url + '> dc:title ?title')
@@ -136,9 +156,10 @@ function searchExternal () {
          		    	    	        $('#pubDOI').val(this.doi.value);
      		    	    	         });
 
-     		    	    	      // Non-literal assertions, involving several resources that need to be created
+     		    	    	      // Now do the non-literal assertions, involving several resources that need to be created
      		    	    	      
-            	    	          // The pub date: needs an instance of DateTimeValue which holds the date string itself precision indicator (year, month etc.)
+            	    	          // The pub date: this needs an instance of DateTimeValue which holds the date string itself
+     		    	    	      // precision indicator (year, month etc.).
      		    	    	      rdf.where('<' + doi_url + '> dc:date ?date')
      		    	    	         .each(function(index) {
      		    	    	        	// figure out year precision from inspecting the string
@@ -146,7 +167,7 @@ function searchExternal () {
          		    	    	        $('#pubDateTimePrecisionUri').val('http://vivoweb.org/ontology/core#yearMonthDayPrecision')  ;  // (this.date.value);
      		    	    	         });
 
-     		    	    	      // The pub venue: needs an instance of InformationResource
+     		    	    	      // The pub venue: this needs an instance of InformationResource
       		    	    	      rdf.where('?pubVenue dc:hasPart <' + doi_url + '>')
       		    	    	         .where('?pubVenue dc:title ?title')
       		    	    	         .where('?pubVenue bibo:issn ?issn')
@@ -159,29 +180,13 @@ function searchExternal () {
   		    	    	          });
      		    	    	    		  
      		    	    	      
-     		    	    	      // Tease out each of the dc:creator resources too
-      		    	    	      rdf.where('<' + doi_url + '> dc:creator ?creator')
-  		    	    	             .each(function(index) {
-      		    	    	      //  $('#pubDOI').val(this.doi);
-  		    	    	          });
-
-
-     		    	    	      // ? can I pass in a list of creator URIs?
-     		    	    	        // each one of those should result in a new 'authorship' assertion
-
-     		    	    	      //rdf.each(function() {
-     		    	    	    	//alert('Got this obj: ' + this);  
-     		    	    	      //});
-     		    	    	      
-     		    	    	      
-     						       //$('#pubDOI').val(item.doi);
-     		    	    	      
-     		    	    	      
-     			    	    	  // Foreach author, 
-     		    	    	      
-     		   		    	    	  // ?replace org. title field OR add a new one <input id="titleExternal" />
-  				           	    	// unhide CiteULike style form populated w/ metadata, allow user to alter this if he wants?
- 	      		    	    	  // $('#externalPubLookupDetails').html('[pub details from RDF to appear here]');
+     		    	    	      // ToDo: Tease out each of the dc:creator resources too and add them to form.. how? s
+      		    	    	      //rdf.where('<' + doi_url + '> dc:creator ?creator')
+  		    	    	          //   .each(function(index) {
+  		    	    	          //});
+    		    	    	         
+      		    	    	      
+                                  // Now that biblio details are filled out, show the form.
       		    	    	      $('#externalPubLookupDetails').show();
      				    	      
       		    	    	      // For later: add some post-processing here and have UI suggest to user that the pub venue might
@@ -192,60 +197,11 @@ function searchExternal () {
      	        	       	} );
    	     	        	  return nRow; // DataTables needs this returned
 
-     	        	       }     	        	       	   
+     	        	     }     	        	       	   
      	        	            
-     	        });
-
-	    	    
-
-
-	    	    	  // TRY LATER: do RDF transformation via the RDF query object and feed to Harvester?
-
+       	        });
 	    	    });     	        
 
 }
 
-// Fill out bibliographic details for publication which user selected from the list of pubs pulled back from the search
-
-function populateExternalBibinfo () {
-
-    alert("clicked on external pub entry w/ input field.value = " + $(this).children("input").val() );
-   // get URL to full biblio record - held in a hidden input element inside the div
-   // this input.value?
-   //start with something simple: just populate pubDOI element + title element and try and get that saved back to the triplestore
-    $('#pubDOI').val("[DOI]");
-    // children("input").
-   // Retrieve full metadata from CrossRef [NB generalize this later for use with PubMed, WorldCat, DataCite and other services]
-
-   //NB skipping over authorlist creation for now - this needs to be handled separately
-
-   // required: title & venue (journal, book publisher etc.)
-   // optional: DOI, volume, issue etc. 
-
-
-
-
-// Look into later: use biblio RDF directly and pass to harvester pipeline
-
-}
-
-// error handling here, yes? 
-
-
-/*
-$.ajax({
-	url: customForm.acUrl,
-    dataType: 'json',
-    data: {
-    	term: request.term,
-        type: customForm.acType
-    },
-    complete: function(xhr, status) {
-    	var results = $.parseJSON(xhr.responseText), 
-        filteredResults = customForm.filterAcResults(results);
-        customForm.acCache[request.term] = filteredResults;
-        response(filteredResults);
-    }
-});
-*/
 
