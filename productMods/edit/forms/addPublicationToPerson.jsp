@@ -161,9 +161,6 @@ SPARQL queries for existing values. --%>
 
 
 
-
-
-
 <%-- This applies to both a new and an existing publication --%>
 <v:jsonset var="n3ForNewAuthorship">
     @prefix core: <${vivoCore}> .
@@ -472,15 +469,16 @@ SPARQL queries for existing values. --%>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>OR</b>
 
-       <h3>Look up publication in external system</h3>
+       <h3>Search for existing publication in CrossRef</h3>
 	    <!--  [perhaps hide this and only reveal if user clicks link or button]  -->
-	    <!-- add selector for CrossRef / PubMed / IEEE etc. - how to make this configurable?? -->
-	           
-    <!-- figure how to only show this IF its an article?
-        more generally: IF article THEN show CrossRef / Pubmed / etc options
-                        IF dataset THEN show DataCite
-                        etc.          
-     -->
+
+	    <!-- add selector for CrossRef / PubMed / IEEE etc. - how to make this configurable?? -->	           
+        <!-- figure out how to only show this IF its an article?
+          more generally: IF article THEN show CrossRef / Pubmed / etc options
+                          IF dataset THEN show DataCite
+                          etc.          
+          -->
+
 	  <p>
 	    <v:input type="text" id="externalPubLookupTerms" name="externalPubLookupTerms" label="Enter search terms" size="50" />	    
 

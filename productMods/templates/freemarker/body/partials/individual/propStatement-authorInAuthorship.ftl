@@ -22,21 +22,22 @@
 
    ${linkedIndividual}
 
-    <#if statement.dateTime??>        
-     <@dt.yearSpan "${statement.dateTime!}" />
-    </#if>
-
     <#if statement.publicationVenue??>
       in <i>${statement.publicationVenueName}</i>
     </#if>
 
     <#if statement.volume??>
-       <b>${statement.volume}</b>
+       Vol. <b>${statement.volume}</b>
     </#if>
 
     <#if statement.issue??>
-      (${statement.issue})
+      No. ${statement.issue}
     </#if>
+    
+    <#if statement.dateTime??>        
+     (<@dt.yearSpan "${statement.dateTime!}" />)
+    </#if>
+    
 
     <#if statement.doi??>
     doi:<a href="http://dx.doi.org/${statement.doi}">${statement.doi}</a>

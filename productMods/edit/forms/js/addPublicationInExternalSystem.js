@@ -63,35 +63,47 @@ function searchExternal () {
    	            
    	            var bibdata = []; // This will be populated in the callback and then fed to DataTable
 	    	    $.each(data, function(i,item){
-	    	    	bibdata.push([item.fullCitation,item.doi,null]);	    	    		    	        
+	    	    	bibdata.push([null, item.fullCitation,item.doi]);	    	    		    	        
 	    	    });
 	    	    
 	    	    // ToDo: error handling, nee to catch 500 or other non-200 responses from the external search service
 	    	    // and display an error msg to the user.
 	    	    
    	            // Use the excellent DataTables plugin for jQuery to create a pretty table from data collected above
-                $('#externalPubLookupResultListing').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="externalPubTable"></table>' );
+                $('#externalPubLookupResultListing').html('Select the reference you want to import: <br /> <table cellpadding="0" cellspacing="0" border="0" class="display" id="externalPubTable"></table>' );
                 var oTable =  $('#externalPubTable').dataTable({
      	        	"bFilter": false,
      	        	"bPaginate": false,
      	        	"bAutoWidth": true,
      	        	"aaData": bibdata,
      	        	"aoColumns": [
-     	        	           { "sTitle": "Citation" },
+     	        	           {"sTitle": "",
+         	        	           "fnRender": function(obj) {
+          	      		    		 return '<img src="/images/individual/addIcon.gif" alt="add" />'; // This should be displayed in the table
+       	   		            	   }
+     	        	           },
+     	        	           { "sTitle": "Citation",
+       	        	        	 "fnRender": function(obj) {
+  	      		    		     	var doi = obj.aData[2]; // grab raw DOI from other column
+  	      			    	    	var doi_url = 'http://dx.doi.org/' + doi;
+     	      		    		    var doi_formatted = 'doi:<a href="' + doi_url + '">' + doi + '</a>';        	      		    		    
+     	      		    		    return obj.aData[1] + ' ' + doi_formatted; // This should be displayed in the table
+  	   		            		    }
+     	        	           },
      	        	           { "sTitle": "DOI raw","bVisible": false },
-     	        	           { "sTitle": "DOI",
-     	        	        	 // Special handling to display hyperlinked DOI name
-     	        	        	 "fnRender": function(obj) {
-     	      		    		     	var doi = obj.aData[1]; // grab raw DOI from other column
-     	      			    	    	var doi_url = 'http://dx.doi.org/' + doi;
-        	      		    		    var doi_formatted = 'doi:<a href="' + doi_url + '">' + doi + '</a>';        	      		    		    
-        	      		    		    return doi_formatted; // This should be displayed in the table
-     	   		            		}
-     	        	       	   },
+//     	        	           { "sTitle": "DOI",
+//     	        	        	 // Special handling to display hyperlinked DOI name
+//     	        	        	 "fnRender": function(obj) {
+//     	      		    		     	var doi = obj.aData[1]; // grab raw DOI from other column
+//     	      			    	    	var doi_url = 'http://dx.doi.org/' + doi;
+//        	      		    		    var doi_formatted = 'doi:<a href="' + doi_url + '">' + doi + '</a>';        	      		    		    
+//        	      		    		    return doi_formatted; // This should be displayed in the table
+//     	   		            		}
+//     	        	       	   },
      	        	       	   ],
      	        	  "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
      	        	      	$(nRow).click( function() {
-       	     	              var doi = aData[1];
+       	     	              var doi = aData[2];
      	 	    	          $('#externalPubLookupResultListing').empty(); // Remove result listing
      	 	    	          $('#externalPubLookupDetails').hide();
      	 	    	          $('#externalPubLookupStatus > span').text('Retrieving metadata for doi:'+doi)

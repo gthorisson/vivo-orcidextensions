@@ -17,6 +17,9 @@
 #OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+# A basic Sinatra-based REST API that runs alongside the main VIVO Java application. 
+
+
 require 'sinatra'
 require "sinatra/reloader" if development?
 
@@ -118,6 +121,8 @@ get '/jruby/testfwd' do
 
 end
 
+
+# !! EXPERIMENTAL !! 
 def forward_to(url)
   puts "forwarding to servlet mapped to #{url}"
   servlet_request = request.env['java.servlet_request']
