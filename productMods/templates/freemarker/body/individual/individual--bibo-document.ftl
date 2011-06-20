@@ -66,19 +66,19 @@ ul.flatlist li.last:after
                   <@p.objectProperty  pubVenue false />
                 </ul>
               </#if>
-              <#if (volume?size != 0)>
+              <#if (volume?has_content && volume.statements?size != 0)>
                   Vol. <b>${volume.statements[0].value}</b>
               </#if>           
-              <#if (issue.statements?size != 0)>
+              <#if (issue?has_content && issue.statements?size != 0)>
                   No. ${issue.statements[0].value}
               </#if>           
-              <#if (pageStart?size != 0)>
+              <#if (pageStart?has_content && pageStart.statements?size != 0)>
                   pp. ${pageStart.statements[0].value}
               </#if>           
-              <#if (pageEnd?size != 0)>
+              <#if (pageEnd?has_content && pageEnd.statements?size != 0)>
                   - ${pageEnd.statements[0].value}
               </#if>           
-              <#if (doi?size != 0)>
+              <#if (doi?has_content && doi.statements?size != 0)>
                   doi:<a href="http://dx.doi.org/${doi.statements[0].value}">${doi.statements[0].value}</a>
               </#if>           
             
