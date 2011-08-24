@@ -1,0 +1,19 @@
+
+<%= form_for @profile do |f| %>
+
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :affiliation %><br />
+    <%= f.text_field :affiliation %>
+  </p>
+  <p>
+    <%= f.label :role %><br />
+    <%= f.text_field :role %>
+  </p>
+
+  <p class="button"><%= f.submit %></p>
+
+<% end %>

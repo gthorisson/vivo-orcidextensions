@@ -1,0 +1,3 @@
+Simple Rails application to serve the role of an OAuth consumer which
+communicates with the OAuth provider extension to VIVO.
+

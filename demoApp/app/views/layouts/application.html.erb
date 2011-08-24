@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for?(:title) ? yield(:title) : "Journal of Psychoceramics" %></title>
+    <%= stylesheet_link_tag "application" %>
+    <%= javascript_include_tag :defaults %>
+    <%= csrf_meta_tag %>
+    <%= yield(:head) %>
+  </head>
+  <body>
+
+<div id="banner">
+
+  <%= image_tag "jpc_logo.jpg", :alt => "JPC logo" %>
+  <h1><%= link_to "Journal of Psychoceramics", root_path %></h1>
+</div>
+
+
+
+
+<div id="user_nav">
+<% if user_signed_in? %>
+ Signed in as <b><%= current_user.email %></b>
+  <%= tabs_tag do |tab| %>
+    <%= tab.account   'My account', manuscripts_path %>
+    <%= tab.manuscripts   'My manuscripts', manuscripts_path %>
+    <%= tab.authentications   'My authns', authentications_path %>
+    <%= tab.signout   'Sign out', destroy_user_session_path %>
+  <% end %>
+<% else %>
+  <%= link_to 'Sign in', new_user_session_path %>
+<% end %> 
+</div>
+ 
+    <div id="container">
+      <% flash.each do |name, msg| %>
+        <%= content_tag :div, msg, :id => "flash_#{name}" %>
+      <% end %>
+      
+      <%= content_tag :h1, yield(:title) if show_title? %>
+      <%= yield %>
+
+    </div>
+  </body>
+</html>

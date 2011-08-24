@@ -1,0 +1,19 @@
+
+
+<%= form_for (@manuscript) do |f|  %>
+
+
+<div class="field">
+    <%= f.label :title %><br />
+    <%= f.text_field :title %>
+  </div>
+
+[upload file]
+<br />
+
+[??2-stage process, add coauthors as ORCIDs at next stage??]
+
+
+  <p><%= f.submit "Submit" %></p>  
+
+<% end %>

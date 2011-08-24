@@ -1,0 +1,26 @@
+<h2>Welcome to the DemoMSapp</h2>
+
+
+<p>
+
+ <% if user_signed_in? %>
+
+  <% ext_authn =  current_user.authentications %>
+
+   Hello <%= current_user.email %>
+
+What would you like to do?
+
+<br /> - <%= link_to "Submit a manuscript", new_manuscript_path  %>
+
+
+
+<br /> - <%= link_to "Register my ORCID", users_register_orcid_path( :destination => "submit_manuscript")  %>
+
+ <% else %>
+To do anything of interest on this demo site, you need to sign in: 
+  <%= link_to "Sign in / sign up", new_user_session_path %> 
+ <% end %>  
+</div>
+
+</p>
