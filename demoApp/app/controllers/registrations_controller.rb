@@ -24,7 +24,6 @@ class RegistrationsController < Devise::RegistrationsController
     if resource.save
       set_flash_message :notice, :signed_up
       puts 'created user'
-      pp resource
       #sign_in_and_redirect(resource_name, resource) # From Devise
       sign_in_and_redirect(profiles_new_path) # From Devise
       #redirect_to profiles_new_path, :notice => :signed_up

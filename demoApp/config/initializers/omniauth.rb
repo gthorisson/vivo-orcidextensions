@@ -1,6 +1,5 @@
 require 'omniauth/core'
 require 'omniauth/oauth'
-require 'oauth_orcid'
 require 'oauth_vivo'
 
 Rails.application.config.middleware.use OmniAuth::Builder do

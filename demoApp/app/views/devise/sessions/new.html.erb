@@ -22,7 +22,7 @@ OR
 
 Sign in using your DemoMSapp account
 
-<%= form_for(resource_name, resource, :url => session_path(resource_name)) do |f| %>  
+<%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>  
   <ul class="formList">  
     <li><%= f.label :email %> <%= f.text_field :email %></li>  
     <li><%= f.label :password %> <%= f.password_field :password %></li>  
