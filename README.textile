@@ -8,6 +8,14 @@ A set of extensions for the VIVO semantic platform, created by ORCID as part of 
 
 "https://github.com/gthorisson/vivo-orcidextensions":https://github.com/gthorisson/vivo-orcidextensions
 
+h2. Main components
+
+demoApp - standalone Ruby-on-Rails demo application. Serves as a prototyping test bed for OAuth API interaction, between either i) two instances of demo app, or ii) demo app and the enhanced VIVO instance.
+
+
+productMods - various modifications to the VIVO application, including new or modified templates,  configuration, Javascript, CSS and JRuby code.
+
+
 h2. More information
 
 See the "project wiki":https://github.com/gthorisson/vivo-orcidextensions/wiki for details

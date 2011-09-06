@@ -20,12 +20,6 @@ class UsersController < ApplicationController
   end
 
 
-  
-  # Show username/pwd and profile data combined
-  def account
-
-  end
-
   # Edit username/pwd  and profile data combined
   def edit
 

@@ -10,11 +10,9 @@ class ManuscriptsController < ApplicationController
   # Form for user to submit a new MS
   def new
 
-    pp current_user
 
     # Direct user to ORCID registration prompt before submitting MS
     if params[:register_orcid]
-      pp params
       # store destination in session? 
       redirect_to users_register_orcid_path(:destination => new_manuscript_path) and return # ToDo: add destination=current URL
     end
@@ -26,7 +24,6 @@ class ManuscriptsController < ApplicationController
 
   # Create new MS from user-supplied params
   def create
-    pp params
     @manuscript = current_user.manuscripts.new(params[:manuscript])
     if @manuscript.save
       redirect_to(manuscripts_path, :notice => 'Manuscript '+@manuscript.title+' was successfully submitted.')

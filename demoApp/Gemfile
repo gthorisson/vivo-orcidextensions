@@ -2,21 +2,21 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.0.9'
 
-gem 'sqlite3'
-
-
 # To use debugger (ruby-debug for Ruby 1.8.7+, ruby-debug19 for Ruby 1.9.2+)
 # gem 'ruby-debug'
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
 gem "bcrypt-ruby", :require => "bcrypt"
-
+gem 'sqlite3'
 gem "devise"
 #gem 'omniauth'
 gem 'oa-core'
 gem 'oa-oauth'
+gem 'oauth-plugin'
 gem 'tabs_on_rails'
 gem 'nifty-generators'
+gem 'ruby-debug'
+gem 'jquery-rails', '>= 1.0.12'
 
 
 # Bundle gems for the local environment. Make sure to
@@ -25,6 +25,9 @@ gem 'nifty-generators'
 
 # group :development, :test do
 #   gem 'webrat'
+#gem 'cucumber'
+#gem 'cucumber-rails'
+#gem 'rspec-rails'
 
 
 # end

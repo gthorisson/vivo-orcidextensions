@@ -1,9 +1,13 @@
 Blog::Application.routes.draw do
   
-  post 'profiles' => 'profiles#create'
   get 'account' => 'profiles#show'
   get 'account/edit' => 'profiles#edit'
-  get 'profiles/new' => 'profiles#new'
+  #get 'profiles/new' => 'profiles#new'
+  #post 'profiles' => 'profiles#create'
+  #get 'profiles/:id' => 'profiles#show'
+  resources :profiles
+  get 'cid/:cid' => 'profiles#show_cidprofile_publiconly'
+  get 'cid/:cid/full' => 'profiles#show_cidprofile_full'
 
   match '/auth/:provider/callback' => 'authentications#create'
   devise_for :users, :controllers => { :registrations => 'registrations' }

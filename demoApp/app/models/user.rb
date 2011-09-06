@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
   attr_accessible :email, :password, :password_confirmation, :roles
   has_many :authentications, :dependent => :destroy
   has_many :manuscripts, :dependent => :destroy
-  has_many :profiles, :dependent => :destroy
+  has_one :profile, :dependent => :destroy
 
   def apply_omniauth(omniauth)  
     authentications.build(:provider => omniauth['provider'], :uid => omniauth['uid'])  

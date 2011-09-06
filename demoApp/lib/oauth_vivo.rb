@@ -17,7 +17,7 @@ module OmniAuth
       end
 
       # Add user profile data to the OAuth parameters already in hand
-      def auth_hash     
+      def auth_hash
 
         hash = user_hash(@access_token)
         puts "got final hash with user info:"
@@ -35,8 +35,19 @@ module OmniAuth
       def user_hash(access_token)
 
         puts "in user_hash(), fetching profile data via OAuth token"
-        response = access_token.get('/rails/api/users/profile')
-        p response.body
+
+        begin
+          #response = access_token.get('/rails/api/users/profile')
+          response = access_token.get('http://vivo.crossref.org/individual/n80') 
+          p "response="
+          pp response
+          p "response.body="
+          pp response.body
+        rescue
+          puts "An error occurred when retrieving user profile: #{$!}"
+        end
+        
+        # ToDo: RDF-to-hash conversion
  
         hash = MultiJson.decode(response.body)        
         return hash['user']
