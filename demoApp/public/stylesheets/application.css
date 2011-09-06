@@ -27,6 +27,11 @@ a {
   margin-top: 20px;
 }
 
+#container:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+#container { display: inline-block; }
+#container { display: block; }
+
+
 #flash_notice, #flash_error, #flash_alert {
   padding: 5px 8px;
   margin: 10px 0;
@@ -171,59 +176,54 @@ a {
   margin-bottom: 10px;
 }
 
-.login-or {
-    color: #FFFFFF;
-    display: block;
-    float: left;
-    font-size: 18px;
-    font-weight: bold;
-    height: 300px;
-    line-height: 300px;
-    padding: 10px 0;
-    text-align: center;
-    width: 60px;
-}
 
 .login-orcid {
-    background-color: #F0F4F5;
-    float: left;
-    font-size: 22px;
+    font-size: 16px;
     font-weight: bold;
-    height: 300px;
+    height: 210px;
     line-height: normal;
     padding: 10px;
     position: relative;
-    width: 400px;
+    width: 40%;
+    float: left;
 }
 
-.login-login {
-    background-color: #F0F4F5;
-    float: left;
-    font-size: 22px;
+.login-or {
+    font-size: 14px;
     font-weight: bold;
     height: 210px;
-    letter-spacing: -0.06em;
-    line-height: normal;
-    padding: 10px;
-    width: 300px;
-}
-
-.login-registration {
-    background-color: #F0F4F5;
+    line-height: 150px;
+    padding: 10px 0;
+    text-align: center;
+    width: 7%;
     float: left;
-    font-size: 22px;
-    font-weight: bold;
-    height: 60px;
-    letter-spacing: -0.06em;
-    line-height: normal;
-    margin-top: 10px;
-    padding: 10px;
-    width: 235px;
 }
 
-.login-login form {
-    font-size: 12px;
+#user-login,#user-registration {
+    width: 40%;
+    font-size: 14px;
     font-weight: normal;
+    border: 1px solid #e5e5e5;
+    box-shadow: rgba(200,200,200,0.7) 0 4px 10px -1px;
+    margin-left: 8px;
+    padding: 10px;
+}
+#user-login,#user-registration { display: inline-block; }
+#user-login,#user-registration { display: block; }
+
+#user-login input,#user-registration input {
+    font-size: 120%;
+    font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+    background: #fbfbfb;
+    padding: 3px;
+    margin-top: 2px;
+    margin-right: 6px;
+    margin-bottom: 16px;
+    border: 1px solid #e5e5e5;
+    
+}
+#user-login input#user_submit,#user-registration input#user_submit {
+    margin-left: 25px;
 }
 
 #user_nav ul {
@@ -243,4 +243,54 @@ a {
 #user_nav ul li.last:after
 {
   content: " ";
+}
+
+
+.clear {
+    clear: both;
+}
+
+
+.otherNamesSelect {
+    width: 30em;
+    margin-bottom: 6px;
+    color: #333333;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 75%;
+    margin-top: 5px;
+}
+
+/* Some borrowed styles from ORCID sandbox */
+
+.profileFieldLabel {
+	font-size: 75%;
+	color: #333333;
+	white-space: nowrap;
+	text-align: right;
+	vertical-align: top;
+	padding-top: 5px;
+	font-weight: normal;
+	padding-right: 2px;
+	padding-left: 6px;
+}
+
+.profileDataCells {
+	vertical-align: top;
+	padding-top: 5px;
+	font-size: 75%;
+	color: #333333;
+	padding-left: 2px;
+	padding-right: 16px;
+	padding-bottom: 2px;
+	font-weight: bold;
+}
+
+.profileName {
+	font-size: 110%;
+	font-weight: bold;
+	color: #4D88C4;
+	padding-right: 4px;
+	padding-bottom: 4px;
+	padding-left: 8px;
+	padding-top: 4px;
 }

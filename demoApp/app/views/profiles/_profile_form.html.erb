@@ -2,17 +2,32 @@
 <%= form_for @profile do |f| %>
 
   <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
+    <%= f.label "First / Given Name" %><br />
+    <%= f.text_field :firstname %>
   </p>
   <p>
-    <%= f.label :affiliation %><br />
-    <%= f.text_field :affiliation %>
+    <%= f.label "Last / Family Name" %><br />
+    <%= f.text_field :lastname %>
   </p>
   <p>
-    <%= f.label :role %><br />
-    <%= f.text_field :role %>
+    <%= f.label "Middle Initials" %><br />
+    <%= f.text_field :middleinitials %>
   </p>
+
+<p>
+Other names<br />
+
+<%= text_field_tag "other_name_add", nil, :maxlength => 100, :size=> 50  %> 
+
+<%= link_to_function "Add name", "this.click( function(){alert('foo!'); var n = this.value; alert('adding name' + n); })", :class =>"nav_link" %>
+
+<span class="button"><%= submit_tag "Add name"  %></span>
+<br />
+
+
+<%= select_tag "other_name", options_from_collection_for_select(  @profile.other_names, 'name','name') ,:multiple  => true, :class => 'otherNamesSelect' %> 
+</p>
+
 
   <p class="button"><%= f.submit %></p>
 

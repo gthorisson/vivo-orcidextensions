@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110811142633) do
+ActiveRecord::Schema.define(:version => 20110901144027) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -35,6 +35,13 @@ ActiveRecord::Schema.define(:version => 20110811142633) do
     t.datetime "updated_at"
   end
 
+  create_table "other_names", :force => true do |t|
+    t.text     "name"
+    t.integer  "profile_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "posts", :force => true do |t|
     t.string   "name"
     t.string   "title"
@@ -50,6 +57,11 @@ ActiveRecord::Schema.define(:version => 20110811142633) do
     t.text     "role"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "firstname"
+    t.string   "lastname"
+    t.string   "middleinitials"
+    t.string   "orcid"
+    t.string   "cid"
   end
 
   create_table "tags", :force => true do |t|
