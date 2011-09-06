@@ -27,6 +27,7 @@
     <% end %>
     <%= tab.manuscripts   'My manuscripts', manuscripts_path %>
     <%= tab.authentications   'My authns', authentications_path %>
+    <%= tab.apps "Apps", oauth_clients_path %>
     <%= tab.signout   'Sign out', destroy_user_session_path %>
   <% end %>
 <% else %>
