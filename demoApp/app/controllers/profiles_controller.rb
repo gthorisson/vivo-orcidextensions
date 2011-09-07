@@ -83,6 +83,10 @@ class ProfilesController < ApplicationController
   end
 
  def show_cidprofile_full
+   puts 'got signed request from an OAuth consumer:'
+   pp current_token
+   pp current_client_application
+   
     @profile = Profile.find_by_cid(params[:cid])
     puts 'found profile by cid=' + params[:cid]
 
@@ -113,5 +117,12 @@ class ProfilesController < ApplicationController
       end
     end
   end
+
+
+  # Fix cryptic issue resulting in NoMethodError ("undefined method `current_user='" [..]
+  def current_user=(user)
+    sign_in(user)
+  end
+  
 
 end

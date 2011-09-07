@@ -16,6 +16,15 @@ class OauthController < ApplicationController
     #params[:authorize] == '1'
     return true if params[:authorize]
   end
+
+
+  def authorize
+    puts "in modded authz routine, params from authz form="
+    pp params
+    
+    super
+  end
+
   
   
 end

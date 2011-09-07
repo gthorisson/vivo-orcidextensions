@@ -23,9 +23,10 @@ module OmniAuth
         puts "got final hash with user info:"
         pp hash
 
+        puts 'Preparing hash as per OmniAuth convention and returning to caller'
         OmniAuth::Utils.deep_merge(
           super, {
-            'uid' => hash.delete('id'), # a unique user ID in this authn system
+            'uid' => hash['cid'], # a unique user ID in this authn system
             'user_info' => hash, # additional information about the user
           }
         )
@@ -35,19 +36,21 @@ module OmniAuth
       def user_hash(access_token)
 
         puts "in user_hash(), fetching profile data via OAuth token"
+        puts "got access_token.params="
+        pp access_token.params
 
         begin
-          response = access_token.get('/profiles') # ToDo: replace with call to 'full' bio resource
-          p "response="
-          pp response
-          p "response.body="
-          pp response.body
+          # Make signed request to retrieve the profile data, including protected fields
+          response = access_token.get('/cid/0723-1814-6587-5983/full', { 'Accept'=>'application/json'})
         rescue
           puts "An error occurred when retrieving user profile: #{$!}"
         end
         
-        hash = MultiJson.decode(response.body)        
-        return hash['user']
+        puts 'ended up with this as profile data: ' + response.body
+        
+        hash = MultiJson.decode(response.body)
+        #return hash['user']
+        return hash['profile']
       end
 
     end
