@@ -1,0 +1,92 @@
+Aug 15, 2011 3:03:34 PM org.apache.catalina.startup.ContextConfig webConfig
+INFO: No global web.xml found
+Aug 15, 2011 3:03:35 PM org.apache.catalina.core.ApplicationContext log
+INFO: Info: received max runtimes = 5
+Aug 15, 2011 3:03:35 PM org.apache.catalina.core.ApplicationContext log
+INFO: jruby 1.6.3 (ruby-1.8.7-p330) (2011-07-07 965162f) (Java HotSpot(TM) 64-Bit Server VM 1.6.0_24) [linux-amd64-java]
+Aug 15, 2011 3:03:35 PM org.apache.catalina.core.ApplicationContext log
+INFO: Info: using runtime pool timeout of 30 seconds
+Aug 15, 2011 3:03:35 PM org.apache.catalina.core.ApplicationContext log
+INFO: Info: received min runtimes = 1
+Aug 15, 2011 3:03:35 PM org.apache.catalina.core.ApplicationContext log
+INFO: Info: received max runtimes = 5
+Aug 15, 2011 3:03:36 PM org.apache.catalina.core.ApplicationContext log
+INFO: Info: received min runtimes = 1
+Aug 15, 2011 3:03:36 PM org.apache.catalina.core.ApplicationContext log
+INFO: Info: received max runtimes = 5
+Aug 15, 2011 3:03:36 PM org.apache.catalina.core.ApplicationContext log
+INFO: An exception happened during JRuby-Rack startup
+No such file to load -- /home/gthorisson/vcwork/vivo-orcidextensions/productMods/WEB-INF/oauthprovider/db/config/environment.rb
+--- System
+jruby 1.6.3 (ruby-1.8.7-p330) (2011-07-07 965162f) (Java HotSpot(TM) 64-Bit Server VM 1.6.0_24) [linux-amd64-java]
+Time: Mon Aug 15 15:03:36 +0000 2011
+Server: Apache Tomcat/7.0.11
+jruby.home: /home/gthorisson/jruby-1.6.3
+
+--- Context Init Parameters:
+jruby.compat.version = 1.8.7
+jruby.initial.runtimes = 1
+jruby.max.runtimes = 5
+jruby.min.runtimes = 1
+public.root = /public
+rails.env = development
+rails.root = /
+
+--- Backtrace
+LoadError: No such file to load -- /home/gthorisson/vcwork/vivo-orcidextensions/productMods/WEB-INF/oauthprovider/db/config/environment.rb
+              load at org/jruby/RubyKernel.java:1063
+  load_environment at file:/home/gthorisson/jruby-1.6.3/lib/ruby/gems/1.8/gems/jruby-rack-1.0.9/lib/jruby-rack-1.0.9.jar!/jruby/rack/rails.rb:54
+            to_app at file:/home/gthorisson/jruby-1.6.3/lib/ruby/gems/1.8/gems/jruby-rack-1.0.9/lib/jruby-rack-1.0.9.jar!/jruby/rack/rails.rb:47
+               new at file:/home/gthorisson/jruby-1.6.3/lib/ruby/gems/1.8/gems/jruby-rack-1.0.9/lib/jruby-rack-1.0.9.jar!/jruby/rack/rails.rb:193
+            (root) at <web.xml>:1
+     instance_eval at org/jruby/RubyKernel.java:2061
+        initialize at file:/home/gthorisson/jruby-1.6.3/lib/ruby/gems/1.8/gems/jruby-rack-1.0.9/lib/jruby-rack-1.0.9.jar!/vendor/rack-1.2.2/rack/builder.rb:46
+            (root) at <web.xml>:1
+
+--- Bundler
+undefined method `bundle_path' for Bundler:Module
+
+--- JRuby-Rack Config
+background_spooling = false
+compat_version = RUBY1_8
+filter_adds_html = true
+filter_verifies_resource = false
+ignore_environment = false
+initial_runtimes = 1
+jms_connection_factory = 
+jms_jndi_properties = 
+logger = org.jruby.rack.logging.ServletContextLogger@1259b924
+logger_class_name = servlet_context
+logger_name = jruby.rack
+maximum_runtimes = 5
+memory_buffer_size = 65536
+num_initializer_threads = 
+rackup = 
+rackup_path = 
+rewindable = true
+runtime_timeout_seconds = 
+serial_initialization = false
+servlet_context = org.apache.catalina.core.ApplicationContextFacade@1e26fbfc
+
+--- $LOAD_PATH:
+file:/home/gthorisson/jruby-1.6.3/lib/ruby/gems/1.8/gems/jruby-rack-1.0.9/lib/jruby-rack-1.0.9.jar!/vendor/rack-1.2.2
+/home/gthorisson/jruby-1.6.3/lib/ruby/site_ruby/1.8
+/home/gthorisson/jruby-1.6.3/lib/ruby/site_ruby/shared
+/home/gthorisson/jruby-1.6.3/lib/ruby/1.8
+.
+
+Aug 15, 2011 3:03:36 PM org.apache.catalina.core.ApplicationContext log
+SEVERE: Error: unable to initialize application
+org.jruby.rack.RackInitializationException: No such file to load -- /home/gthorisson/vcwork/vivo-orcidextensions/productMods/WEB-INF/oauthprovider/db/config/environment.rb
+	from file:/home/gthorisson/jruby-1.6.3/lib/ruby/gems/1.8/gems/jruby-rack-1.0.9/lib/jruby-rack-1.0.9.jar!/jruby/rack/rails.rb:54:in `load_environment'
+	from file:/home/gthorisson/jruby-1.6.3/lib/ruby/gems/1.8/gems/jruby-rack-1.0.9/lib/jruby-rack-1.0.9.jar!/jruby/rack/rails.rb:47:in `to_app'
+	from file:/home/gthorisson/jruby-1.6.3/lib/ruby/gems/1.8/gems/jruby-rack-1.0.9/lib/jruby-rack-1.0.9.jar!/jruby/rack/rails.rb:193:in `new'
+	from <web.xml>:1:in `(root)'
+	from org/jruby/RubyKernel.java:2061:in `instance_eval'
+	from file:/home/gthorisson/jruby-1.6.3/lib/ruby/gems/1.8/gems/jruby-rack-1.0.9/lib/jruby-rack-1.0.9.jar!/vendor/rack-1.2.2/rack/builder.rb:46:in `initialize'
+	from <web.xml>:1:in `(root)'
+
+	at org.jruby.rack.DefaultRackApplicationFactory$4.init(DefaultRackApplicationFactory.java:204)
+	at org.jruby.rack.PoolingRackApplicationFactory$1.run(PoolingRackApplicationFactory.java:162)
+	at java.lang.Thread.run(Thread.java:662)
+Caused by: org.jruby.exceptions.RaiseException: (LoadError) No such file to load -- /home/gthorisson/vcwork/vivo-orcidextensions/productMods/WEB-INF/oauthprovider/db/config/environment.rb
