@@ -11,7 +11,7 @@ class RegistrationsController < Devise::RegistrationsController
     begin
       build_params[:email] = session["omniauth"]["user_info"]["email"]
     rescue
-      puts "couldn't retrieve email from oauth hash: #{$!}"
+      config.logger.debug "couldn't retrieve email from oauth hash: #{$!}"
     end
     user = build_resource(build_params)
     respond_with_navigational(user){ render_with_scope :new }    
@@ -23,11 +23,11 @@ class RegistrationsController < Devise::RegistrationsController
     
     if resource.save
       set_flash_message :notice, :signed_up
-      puts 'created user, now signing in'
+      config.logger.debug 'created user, now signing in'
       #sign_in_and_redirect(resource_name, resource) # From Devise
       #sign_in_and_redirect(resource) # From Devise
       sign_in resource
-      puts 'User is signed in, redirecting to profile form'
+      config.logger.debug 'User is signed in, redirecting to profile form'
       redirect_to new_profile_path, :notice => "Welcome, your are now registered. Do you want to enter additional profile information now?"
     else
       clean_up_passwords(resource)

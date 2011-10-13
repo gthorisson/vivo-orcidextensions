@@ -10,9 +10,10 @@
   <body>
 
 <div id="banner">
-
-
-  <h1>  <%= image_tag "jpc_logo.jpg", :alt => "JPC logo" %> <%= link_to "Journal of Psychoceramics", root_path %></h1>
+  <%= link_to root_path do %>
+    <%= image_tag "jpc_logo.jpg", :alt => "JPC logo" %>   
+  <% end %>
+  <h1>Journal of Psychoceramics</h1>
 </div>
 
 

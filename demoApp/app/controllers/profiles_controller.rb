@@ -1,11 +1,13 @@
 class ProfilesController < ApplicationController
 
+  # Handles profile management and display, including OAuth access to protected data
+  
   set_tab :profile
 
-  # Only allow a logged-in users to creaet & update their profiles
+  # Only allow a logged-in users to create & update their profiles
   before_filter :authenticate_user!, :only => [:new, :create, :update,:edit]
 
-  # These actions are only accessible via OAuth
+  # Only allow access to public + protected profile  data via OAuth
   before_filter :oauth_required, :only => [:show_cidprofile_full]
 
   
@@ -35,7 +37,7 @@ class ProfilesController < ApplicationController
     end        
   end
 
-  # Display user + profile information combined. OR, just profile info here, simpler?
+  # Show complete profile only to the user who owns it
   def show
     #@profile = Profile.find(params[:id])
     @profile = current_user.profile
@@ -54,6 +56,8 @@ class ProfilesController < ApplicationController
     
   end
 
+  # Show public profile information, no restrictions
+  # 
   def show_cidprofile_publiconly
     @profile = Profile.find_by_cid(params[:cid])
     puts 'found profile by cid=' + params[:cid]
@@ -82,22 +86,24 @@ class ProfilesController < ApplicationController
     
   end
 
- def show_cidprofile_full
-   puts 'got signed request from an OAuth consumer:'
-   pp current_token
-   pp current_client_application
-   
+  # Show public + protected profile information, limited to authorized OAuth access
+  #
+  def show_cidprofile_full
+    puts 'got signed request from an OAuth consumer:'
+    pp current_token
+    pp current_client_application
+    
     @profile = Profile.find_by_cid(params[:cid])
     puts 'found profile by cid=' + params[:cid]
-
-   puts 'Showing all profile info:'
-   pp @profile
-   respond_to do |format|
-     format.xml   { render :xml  => @profile }
-     format.json  { render :json => @profile }
-   end   
-   
- end
+    
+    puts 'Showing all profile info:'
+    pp @profile
+    respond_to do |format|
+      format.xml   { render :xml  => @profile }
+      format.json  { render :json => @profile }
+    end   
+    
+  end
 
   def edit
     @profile = Profile.find(params[:id])
@@ -119,6 +125,8 @@ class ProfilesController < ApplicationController
   end
 
 
+  private
+  
   # Fix cryptic issue resulting in NoMethodError ("undefined method `current_user='" [..]
   def current_user=(user)
     sign_in(user)
