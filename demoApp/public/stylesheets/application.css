@@ -1,0 +1,296 @@
+body {
+  background-color: lightgrey;
+  font-family: Verdana, Helvetica, Arial;
+  font-size: 14px;
+}
+
+a img {
+  border: none;
+}
+
+a {
+  color: #0000FF;
+}
+
+.clear {
+  clear: both;
+  height: 0;
+  overflow: hidden;
+}
+
+#container {
+  width: 75%;
+  margin: 0 auto;
+  background-color: #FFF;
+  padding: 20px 40px;
+  border: solid 1px black;
+  margin-top: 20px;
+}
+
+#container:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+#container { display: inline-block; }
+#container { display: block; }
+
+
+#flash_notice, #flash_error, #flash_alert {
+  padding: 5px 8px;
+  margin: 10px 0;
+}
+
+#flash_notice {
+  background-color: #CFC;
+  border: solid 1px #6C6;
+}
+
+#flash_error, #flash_alert {
+  background-color: #FCC;
+  border: solid 1px #C66;
+}
+
+.field_with_errors {
+  display: inline;
+}
+
+#error_explanation {
+  width: 400px;
+  border: 2px solid #CF0000;
+  padding: 0px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+}
+
+#error_explanation h2 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 12px;
+  margin: 0;
+  background-color: #c00;
+  color: #fff;
+}
+
+#error_explanation p {
+  color: #333;
+  margin-bottom: 0;
+  padding: 8px;
+}
+
+#error_explanation ul {
+  margin: 2px 24px;
+}
+
+#error_explanation ul li {
+  font-size: 12px;
+  list-style: disc;
+}
+
+
+.error_messages {
+  width: 400px;
+  border: 2px solid #CF0000;
+  padding: 0px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+  font-size: 12px;
+}
+
+.error_messages h2 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 10px;
+  font-size: 12px;
+  margin: 0;
+  background-color: #c00;
+  color: #fff;
+}
+
+.error_messages p {
+  margin: 8px 10px;
+}
+
+.error_messages ul {
+  margin: 0;
+}
+
+
+/* OmniAuth styling */
+
+.authentications {
+  margin-bottom: 30px;
+}
+
+.authentication {
+  width: 130px;
+  float: left;
+  background-color: #EEE;
+  border: solid 1px #999;
+  padding: 5px 10px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  position: relative;
+  margin-right: 10px;
+}
+
+.authentication .remove {
+  text-decoration: none;
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  color: #333;
+  padding: 2px 4px;
+  font-size: 10px;
+}
+
+.authentication .remove:hover {
+  color: #CCC;
+  background-color: #777;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+}
+
+.authentication img {
+  float: left;
+  margin-right: 10px;
+}
+
+.authentication .provider {
+  font-weight: bold;
+}
+
+.authentication .uid {
+  color: #666;
+  font-size: 11px;
+}
+
+.auth_provider img {
+  display: block;
+}
+
+.auth_provider {
+  float: left;
+  text-decoration: none;
+  margin-right: 20px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+
+.login-orcid {
+    font-size: 16px;
+    font-weight: bold;
+    height: 210px;
+    line-height: normal;
+    padding: 10px;
+    position: relative;
+    width: 40%;
+    float: left;
+}
+
+.login-or {
+    font-size: 14px;
+    font-weight: bold;
+    height: 210px;
+    line-height: 150px;
+    padding: 10px 0;
+    text-align: center;
+    width: 7%;
+    float: left;
+}
+
+#user-login,#user-registration {
+    width: 40%;
+    font-size: 14px;
+    font-weight: normal;
+    border: 1px solid #e5e5e5;
+    box-shadow: rgba(200,200,200,0.7) 0 4px 10px -1px;
+    margin-left: 8px;
+    padding: 10px;
+}
+#user-login,#user-registration { display: inline-block; }
+#user-login,#user-registration { display: block; }
+
+#user-login input,#user-registration input {
+    font-size: 120%;
+    font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+    background: #fbfbfb;
+    padding: 3px;
+    margin-top: 2px;
+    margin-right: 6px;
+    margin-bottom: 16px;
+    border: 1px solid #e5e5e5;
+    
+}
+#user-login input#user_submit,#user-registration input#user_submit {
+    margin-left: 25px;
+}
+
+#user_nav ul {
+    display: inline;
+    list-style-type: none;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+#user_nav ul li
+{
+  display: inline;
+}
+#user_nav ul li:before
+{
+  content: " | ";
+}
+#user_nav ul li.last:after
+{
+  content: " ";
+}
+
+
+.clear {
+    clear: both;
+}
+
+
+.otherNamesSelect {
+    width: 30em;
+    margin-bottom: 6px;
+    color: #333333;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 75%;
+    margin-top: 5px;
+}
+
+/* Some borrowed styles from ORCID sandbox */
+
+.profileFieldLabel {
+	font-size: 75%;
+	color: #333333;
+	white-space: nowrap;
+	text-align: right;
+	vertical-align: top;
+	padding-top: 5px;
+	font-weight: normal;
+	padding-right: 2px;
+	padding-left: 6px;
+}
+
+.profileDataCells {
+	vertical-align: top;
+	padding-top: 5px;
+	font-size: 75%;
+	color: #333333;
+	padding-left: 2px;
+	padding-right: 16px;
+	padding-bottom: 2px;
+	font-weight: bold;
+}
+
+.profileName {
+	font-size: 110%;
+	font-weight: bold;
+	color: #4D88C4;
+	padding-right: 4px;
+	padding-bottom: 4px;
+	padding-left: 8px;
+	padding-top: 4px;
+}

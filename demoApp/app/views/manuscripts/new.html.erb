@@ -1,0 +1,34 @@
+<h2>Manuscript Submission</h2>
+
+<% if ((current_user.authentications.size == 0) && !(params[:cancel]))   %>
+
+<h4>The Journal of Psychoceramics now supports ORCIDs.</h4>
+
+<p>An ORCID author identifier allows you to save time when submitting papers to
+  journals, by allowing you to enter and maintain your
+  contact information  & publishing history in one place. Once you
+  have done this, you can automatically fill-in your publishing
+  profile whenever you submit a manuscript with any <a href="">participating journal</a></p>
+
+<p>You have not yet registered an ORCID with us. Doing so only takes a
+  few seconds and can save you hours in the future. Would you to
+  register an ORCID with us?</p>
+
+<%= form_for(@manuscript, :url => new_manuscript_path, :html => { :method => :get }) do |f| %>
+  <%= f.hidden_field "destination", :value => params[:destination] =  new_manuscript_path  %>
+
+  <%= f.submit "Yes Please", :name => "register_orcid" %>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <%= f.submit "No thanks", :name => "cancel" %> 
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <%= check_box_tag "donotaskagain" %> Don't ask me this again
+<% end  %>
+
+<a href="">More information about ORCID author identifiers</a>
+
+<% else %>
+
+<%= render 'form' %>
+
+
+<%  end %>

@@ -1,13 +1,25 @@
 h1. VIVO extensions for ORCID
 
-By "Gudmundur A. Thorisson":http://www.gthorisson.name/, University of Leicester / ORCID
+By "Gudmundur A. Thorisson":http://www.gthorisson.name, University of Leicester / ORCID
 
 h2. What is it?
 
-A set of extensions for the VIVO semantic platform, created by ORCID as part of the "VIVO Collaborative Research Projects Program":http://www.vivoweb.org/blog/2011/01/award-announcement-vivo-collaborative-research-projects-program
+A set of extensions for the VIVO semantic platform, created by ORCID as part of the "VIVO Collaborative Research Projects Program":http://www.vivoweb.org/blog/2011/01/award-announcement-vivo-collaborative-research-projects-program in collaboration with "ORCID":http://www.orcid.org and "GEN2PHEN":http://www.gen2phen.org
 
 "https://github.com/gthorisson/vivo-orcidextensions":https://github.com/gthorisson/vivo-orcidextensions
+
+h2. Main components
+
+demoApp - standalone Ruby-on-Rails demo application. Serves as a prototyping test bed for OAuth API interaction, between either i) two instances of demo app, or ii) demo app and the enhanced VIVO instance.
+
+
+productMods - various modifications to the VIVO application, including new or modified templates,  configuration, Javascript, CSS and JRuby code.
+
 
 h2. More information
 
 See the "project wiki":https://github.com/gthorisson/vivo-orcidextensions/wiki for details
+
+h2. Acknowledgements
+
+This work is supported by funds from the NIH Award, "VIVO: Enabling National Networking of Scientists":http://www.vivoweb.org, U24 RR029822 and by the European Community’s Seventh Framework Programme (FP7/2007–2013) under contract grant number 200754 ("The GEN2PHEN Project":http://www.gen2phen.org)

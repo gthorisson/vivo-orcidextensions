@@ -1,0 +1,24 @@
+<h1>Manuscripts#index</h1>
+
+
+<%= link_to "Submit new manuscript", new_manuscript_path %>
+<p> </p>
+
+<table id="manuscripts">
+  <tr>
+   <th>Manuscript title</th>
+    <th>File</th>
+ </tr>
+
+<% @manuscripts.each do |ms| %>
+
+  <tr>
+    <td><%= ms.title %></td>
+    <td>[link to uploaded file OR the full text from table?] /
+    [authors w/ ORCIDs? *or* on MS details page]</td>
+ </tr>
+
+<% end %>
+
+
+</table>
