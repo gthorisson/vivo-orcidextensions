@@ -9,6 +9,9 @@ VivoRailsExt::Application.routes.draw do
     
     resources :oauth_clients
 
+    match "/biblio/fetch",  :to => 'biblio#fetch'
+    match "/biblio/search", :to => 'biblio#search'
+
     match '/oauth/test_request',  :to => 'oauth#test_request',  :as => :test_request
     match '/oauth/token',         :to => 'oauth#token',         :as => :token
     match '/oauth/access_token',  :to => 'oauth#access_token',  :as => :access_token

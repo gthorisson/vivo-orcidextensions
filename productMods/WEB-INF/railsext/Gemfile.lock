@@ -111,6 +111,8 @@ GEM
     rbx-require-relative (0.0.5)
     rdoc (3.10)
       json (~> 1.4)
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
     ruby-debug (0.10.4)
       columnize (>= 0.1)
       ruby-debug-base (~> 0.10.4.0)
@@ -144,4 +146,5 @@ DEPENDENCIES
   nifty-generators
   oauth-plugin (>= 0.4.0.pre1)
   rails
+  rest-client
   ruby-debug

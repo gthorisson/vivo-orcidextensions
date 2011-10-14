@@ -54,7 +54,7 @@ function searchExternal () {
       $('#externalPubLookupStatus').show(); // Show progress indicator
       var queryString = $('#externalPubLookupTerms').val();
       
-	  $.getJSON('/jruby/bibliosearch?',
+	  $.getJSON('/railsext/biblio/search?',
 	  {
 		      query: queryString
 	      },
@@ -109,7 +109,7 @@ function searchExternal () {
      	 	    	          $('#externalPubLookupStatus > span').text('Retrieving metadata for doi:'+doi)
      		    	          $('#externalPubLookupStatus').show(); // Show progress indicator again     		    	          
 
-     		    	    	  $.get('/jruby/bibliofetch?doi=' + doi, function(bibdetails_rdf) {
+     		    	    	  $.get('/railsext/biblio/fetch?doi=' + doi, function(bibdetails_rdf) {
      		    	   	          $('#externalPubLookupStatus').hide(); // hide progress indicator
 
         	    	    	   	  // Now that the bibliographic details are in hand, need to fill out form. The
