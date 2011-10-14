@@ -42,6 +42,11 @@
 
   <!-- Listeners ****************************************************** -->
 
+<!-- JRuby-Rack listener config -->
+	<listener>
+	  <listener-class>org.jruby.rack.rails.RailsServletContextListener</listener-class>
+	</listener>
+
   <listener>
     <listener-class>edu.cornell.mannlib.vitro.webapp.config.RevisionInfoSetup</listener-class>
   </listener>
@@ -286,10 +291,10 @@
     <dispatcher>request</dispatcher>
   </filter-mapping>
 
-<!-- JRuby-Rack config to handle JRuby extensions -->  
+<!-- JRuby-Rack filter config -->
   	<context-param>
 	  <param-name>gem.path</param-name>
-	  <param-value>../../../../../home/gthorisson/jruby-1.5.6/lib/ruby/gems/1.8</param-value>
+	  <param-value>../../../../../home/gthorisson/jruby-1.6.3/lib/ruby/gems/1.8</param-value>
 	</context-param>
 	<context-param>
 	  <param-name>jruby.rack.debug.load</param-name>
@@ -297,27 +302,36 @@
 	</context-param>
 	<context-param>
  		 <param-name>jruby.min.runtimes</param-name>
-  		<param-value>1</param-value>
+  		 <param-value>1</param-value>
 	</context-param>
 	<context-param>
 	  <param-name>jruby.max.runtimes</param-name>
 	  <param-value>1</param-value>
 	</context-param>
+	<context-param>
+	  <param-name>rails.env</param-name>
+	  <param-value>development</param-value>
+	</context-param>
+	<context-param>
+	  <param-name>jruby.rack.logging</param-name>
+	  <param-value>stdout</param-value>
+	</context-param>
+	<context-param>
+	  <param-name>rails.root</param-name>
+	  <param-value>/WEB-INF/railsext</param-value>
+	</context-param>
 
 	<filter>
-		<filter-name>RackFilter</filter-name>
-		<filter-class>org.jruby.rack.RackFilter</filter-class>
+	  <filter-name>RackFilter</filter-name>
+	  <filter-class>org.jruby.rack.RackFilter</filter-class>
 	</filter>
 	<filter-mapping>
-		<filter-name>RackFilter</filter-name>
-		<url-pattern>/jruby/*</url-pattern>
+	  <filter-name>RackFilter</filter-name>
+	  <url-pattern>/railsext/*</url-pattern>
 	</filter-mapping>
 	
-	<listener>
-		<listener-class>org.jruby.rack.RackServletContextListener</listener-class>
-	</listener>
-
-<!-- JRuby-Rack config ends -->  
+-->
+<!-- JRuby-Rack filter config ends -->  
 
   
   

@@ -531,7 +531,7 @@ SPARQL queries for existing values. --%>
 
 <c:url var="acUrl" value="/autocomplete?tokenize=true&stem=true" />
 <c:url var="sparqlQueryUrl" value="/ajax/sparqlQuery" />
-<c:url var="externalLookupUrl" value="/jruby/bibliosearch" />
+<c:url var="externalLookupUrl" value="/railsext/biblio/search" />
 
 
 <%-- Must be all one line for JavaScript. --%>
