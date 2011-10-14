@@ -1,4 +1,3 @@
-# -*- coding: undecided -*-
 class AuthenticationsController < ApplicationController
 
   set_tab :authentications
@@ -40,6 +39,6 @@ class AuthenticationsController < ApplicationController
     @authentication = current_user.authentications.find(params[:id])
     @authentication.destroy
     flash[:notice] = "Successfully destroyed authentication."
-    redirect_to authentications_url
+    redirect_to account_url
   end
 end

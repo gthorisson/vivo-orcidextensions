@@ -2,6 +2,11 @@
 
 class UsersController < ApplicationController
 
+  set_tab :account
+
+  # Only allow a logged-in users to view & update their accounts
+  before_filter :authenticate_user!, :only => [:show, :edit]
+
   def new
     @user = User.new
   end
@@ -19,12 +24,8 @@ class UsersController < ApplicationController
     end
   end
 
-
-  # Edit username/pwd  and profile data combined
-  def edit
-
-    # NB vantar partial fyrir i) account og ii) profile, nota saman i overall edit page
-
+  def show
+    @user = current_user    
   end
 
 

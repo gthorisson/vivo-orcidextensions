@@ -26,8 +26,8 @@
     <% if current_user.profile %>
      <%= tab.profile 'My profile', profile_path(current_user.profile) %>
     <% end %>
+    <%= tab.account   'My account', account_path %>
     <%= tab.manuscripts   'My manuscripts', manuscripts_path %>
-    <%= tab.authentications   'My authns', authentications_path %>
     <%= tab.apps "Apps", oauth_clients_path %>
     <%= tab.signout   'Sign out', destroy_user_session_path %>
   <% end %>

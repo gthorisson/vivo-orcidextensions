@@ -1,7 +1,7 @@
 DemoApp::Application.routes.draw do
   
-  get 'account' => 'profiles#show'
-  get 'account/edit' => 'profiles#edit'
+  get 'account' => 'users#show'
+  get 'account/edit' => 'users#edit'
   #get 'profiles/new' => 'profiles#new'
   #post 'profiles' => 'profiles#create'
   #get 'profiles/:id' => 'profiles#show'

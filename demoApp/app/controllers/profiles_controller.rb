@@ -5,7 +5,7 @@ class ProfilesController < ApplicationController
   set_tab :profile
 
   # Only allow a logged-in users to create & update their profiles
-  before_filter :authenticate_user!, :only => [:new, :create, :update,:edit]
+  before_filter :authenticate_user!, :only => [:new,:show, :create, :update,:edit]
 
   # Only allow access to public + protected profile  data via OAuth
   before_filter :oauth_required, :only => [:show_cidprofile_full]
@@ -31,7 +31,7 @@ class ProfilesController < ApplicationController
       pp @profile
       #redirect_location_for(current_user, )
       # ToDo more sensible redirection behaviour here, after a user has created a profile
-      redirect_to account_path, :notice => 'Profile was successfully created.'
+      redirect_to profile_path(@profile), :notice => 'Profile was successfully created.'
     else
       render "new"
     end        
@@ -42,8 +42,11 @@ class ProfilesController < ApplicationController
     #@profile = Profile.find(params[:id])
     @profile = current_user.profile
 
+    # ToDo: error message if no profile is found for user
+
     puts 'Got profile='
     pp @profile
+    
 
     puts 'got other_names='
     pp @profile.other_names

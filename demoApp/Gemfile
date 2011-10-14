@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.9'
+gem 'rails'
 
 # To use debugger (ruby-debug for Ruby 1.8.7+, ruby-debug19 for Ruby 1.9.2+)
 # gem 'ruby-debug'
@@ -9,13 +9,13 @@ gem 'rails', '3.0.9'
 gem "bcrypt-ruby", :require => "bcrypt"
 gem 'sqlite3'
 gem "devise"
-#gem 'omniauth'
 gem 'oa-core'
 gem 'oa-oauth'
-gem 'oauth-plugin'
+gem 'oa-openid'
+gem 'oauth-plugin', ">= 0.4.0.pre1"
 gem 'tabs_on_rails'
 gem 'nifty-generators'
-gem 'ruby-debug'
+gem 'ruby-debug19'
 gem 'jquery-rails', '>= 1.0.12'
 
 

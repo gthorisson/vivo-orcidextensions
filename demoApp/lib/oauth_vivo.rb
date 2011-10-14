@@ -39,10 +39,8 @@ module OmniAuth
         begin
           #response = access_token.get('/rails/api/users/profile')
           response = access_token.request(:get,
-                                          'http://vivo.crossref.org/individual/n80/n80.rdf',
-                                          { 'Accept'=>'application/rdf+xml'}) 
-          p "response="
-          pp response
+                                          'http://vivo.crossref.org/individual/n  80/n80.rdf',
+                                          { 'Accept'=>'application/rdf+xml'})   
           p "response.body="
           pp response.body
         rescue
