@@ -35,7 +35,7 @@ None | <%= link_to "Create my profile now", new_profile_path %>
     <div class="authentications">
       <% for authentication in authentications %>
         <div class="authentication">
-          <%= image_tag "#{authentication.provider}_64.png", :size => "64x64" %>
+          <%= image_tag "#{authentication.provider}_64.png" %>
           <!--<div class="provider"><%= authentication.provider.titleize %></div>-->
 		  <div><%= authentication.uid if authentication.uid  %></div>
           <div><%= link_to "X", authentication, :confirm => 'Are you sure you want to remove this authentication option?', :method => :delete, :class => "remove" %></div>
