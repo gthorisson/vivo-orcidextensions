@@ -52,13 +52,15 @@ core:informationResourceInAuthorship (InformationResource : Authorship) - invers
 <%@page import="edu.cornell.mannlib.vitro.webapp.beans.ObjectPropertyStatement"%>
 <%@ page import="edu.cornell.mannlib.vitro.webapp.beans.Individual" %>
 <%@ page import="edu.cornell.mannlib.vitro.webapp.dao.VitroVocabulary" %>
-<%@ page import="edu.cornell.mannlib.vitro.webapp.edit.n3editing.EditConfiguration" %>
+<%@ page import="edu.cornell.mannlib.vitro.webapp.edit.n3editing.configuration.EditConfiguration" %>
 <%@ page import="edu.cornell.mannlib.vitro.webapp.edit.n3editing.PersonHasPublicationValidator" %>
 <%@ page import="edu.cornell.mannlib.vitro.webapp.dao.WebappDaoFactory" %>
 <%@ page import="edu.cornell.mannlib.vitro.webapp.controller.VitroRequest" %>
 <%@ page import="edu.cornell.mannlib.vitro.webapp.web.MiscWebUtils" %>
 <%@ page import="edu.cornell.mannlib.vitro.webapp.controller.freemarker.UrlBuilder.JavaScript" %>
 <%@ page import="edu.cornell.mannlib.vitro.webapp.controller.freemarker.UrlBuilder.Css" %>
+<%@ page import="edu.cornell.mannlib.vitro.webapp.utils.FrontEndEditingUtils"%>
+<%@ page import="edu.cornell.mannlib.vitro.webapp.utils.FrontEndEditingUtils.EditMode"%>
 
 <%@ page import="org.apache.commons.logging.Log" %>
 <%@ page import="org.apache.commons.logging.LogFactory" %>
@@ -71,13 +73,52 @@ core:informationResourceInAuthorship (InformationResource : Authorship) - invers
     public static String nodeToPubProp = "http://vivoweb.org/ontology/core#linkedInformationResource";
 %>
 <%
+
     VitroRequest vreq = new VitroRequest(request);
+
+    String subjectUri = vreq.getParameter("subjectUri");
+    String predicateUri = vreq.getParameter("predicateUri");
+    String objectUri = vreq.getParameter("objectUri");
+
+	Individual obj = (Individual) request.getAttribute("object");
+
+    EditMode mode = FrontEndEditingUtils.getEditMode(request, nodeToPubProp);
+
+    /*
+    There are 3 modes that this form can be in: 
+     1.  Add. There is a subject and a predicate but no position and nothing else. 
+     
+     2. Repair a bad role node.  There is a subject, predicate and object but there is no individual on the 
+        other end of the object's core:linkedInformationResource stmt.  This should be similar to an add but the form should be expanded.
+        
+     3. Really bad node. Multiple core:authorInAuthorship statements.   
+     
+     This form does not currently support normal edit mode where there is a subject, an object, and an individual on
+     the other end of the object's core:linkedInformationResource statement. We redirect to the publication profile
+     to edit the publication.
+    */
+    
+    if( mode == EditMode.ADD ) {
+       %> <c:set var="editMode" value="add"/><%
+    } else if(mode == EditMode.EDIT){
+        // Because it's edit mode, we already know there's one and only one statement
+        ObjectPropertyStatement ops = obj.getObjectPropertyStatements(nodeToPubProp).get(0);
+        String pubUri = ops.getObjectURI();
+        String forwardToIndividual = pubUri != null ? pubUri : objectUri;         
+        %>  
+        <jsp:forward page="/individual">
+            <jsp:param value="<%= forwardToIndividual %>" name="uri"/>
+        </jsp:forward>  
+        <%              
+    } else if(mode == EditMode.REPAIR){
+        %> <c:set var="editMode" value="repair"/><%
+    }
+    
     WebappDaoFactory wdf = vreq.getWebappDaoFactory();    
     vreq.setAttribute("defaultNamespace", ""); //empty string triggers default new URI behavior
     
-    String subjectUri = vreq.getParameter("subjectUri");
-    String predicateUri = vreq.getParameter("predicateUri");    
-    String subjectName = ((Individual) request.getAttribute("subject")).getName();
+    Individual subject = (Individual) request.getAttribute("subject");
+    String subjectName = subject.getName();
     vreq.setAttribute("subjectUriJson", MiscWebUtils.escape(subjectUri));
     
     vreq.setAttribute("stringDatatypeUriJson", MiscWebUtils.escape(XSD.xstring.toString()));
@@ -85,48 +126,16 @@ core:informationResourceInAuthorship (InformationResource : Authorship) - invers
     String intDatatypeUri = XSD.xint.toString();    
     vreq.setAttribute("intDatatypeUri", intDatatypeUri);
     vreq.setAttribute("intDatatypeUriJson", MiscWebUtils.escape(intDatatypeUri));
-                   
-    Individual subject = (Individual) request.getAttribute("subject");
-	Individual obj = (Individual) request.getAttribute("object");
-	
-	// Check to see if this is an edit of existing, if yes redirect to pub 
-	if( obj != null ){     	
-    	List<ObjectPropertyStatement> stmts =  obj.getObjectPropertyStatements( nodeToPubProp );
-    	if( stmts != null && stmts.size() > 0 ){    		
-    		ObjectPropertyStatement ops = stmts.get(0);
-    		String pubUri = ops.getObjectURI();
-    		if( pubUri != null ){
-    			%>  
-            	<jsp:forward page="/individual">
-            		<jsp:param value="<%= pubUri %>" name="uri"/>
-            	</jsp:forward>  
-            	<%	
-    		} 
-    	}
-	}
-	
-	/* This form is not prepared to deal with editing an existing relationship, so redirect
-	 * to authorship page if no publication was found. This is not ideal, because you can't add
-	 * a linked information resource from that page, but you can at least continue to the back end.
-	 * May want to modify form in a future version to support repair mode.
-	 */
-	if (obj != null) {
-	    String objectUri = obj.getURI();
-        %>  
-        <jsp:forward page="/individual">
-            <jsp:param value="<%= objectUri %>" name="uri"/>
-        </jsp:forward>  
-        <%  	    
-	}
+
 %>
 
 <c:set var="vivoOnt" value="http://vivoweb.org/ontology" />
 <c:set var="vivoCore" value="${vivoOnt}/core#" />
-<c:set var="bibo" value="http://purl.org/ontology/bibo/" />
-<c:set var="dc" value="http://purl.org/dc/terms/" />
 <c:set var="rdfs" value="<%= VitroVocabulary.RDFS %>" />
 <c:set var="label" value="${rdfs}label" />
 <c:set var="infoResourceClassUri" value="${vivoCore}InformationResource" />
+<c:set var="bibo" value="http://purl.org/ontology/bibo/" />
+<c:set var="dc" value="http://purl.org/dc/terms/" />
 
 <%-- Unlike other custom forms, this form does not allow edits of existing authors, so there are no
 SPARQL queries for existing values. --%>
@@ -223,8 +232,37 @@ SPARQL queries for existing values. --%>
 
 
 
-<c:set var="publicationsClassGroupUri" value="${vivoOnt}#vitroClassGrouppublications" />
-<v:jsonset var="publicationsClassGroupUriJson">${publicationsClassGroupUri}</v:jsonset>
+<c:set var="publicationTypeLiteralOptions">
+    ["", "Select one"],
+    ["http://purl.org/ontology/bibo/AcademicArticle", "Academic Article"],
+    ["http://purl.org/ontology/bibo/Article", "Article"],
+    ["http://purl.org/ontology/bibo/AudioDocument", "Audio Document"],
+    ["http://vivoweb.org/ontology/core#BlogPosting", "Blog Posting"],
+    ["http://purl.org/ontology/bibo/Book", "Book"],
+    ["http://vivoweb.org/ontology/core#CaseStudy", "Case Study"],
+    ["http://vivoweb.org/ontology/core#Catalog", "Catalog"],
+    ["http://purl.org/ontology/bibo/Chapter", "Chapter"],
+    ["http://vivoweb.org/ontology/core#ConferencePaper", "Conference Paper"],
+    ["http://vivoweb.org/ontology/core#ConferencePoster", "Conference Poster"],
+    ["http://vivoweb.org/ontology/core#Database", "Database"],
+    ["http://purl.org/ontology/bibo/EditedBook", "Edited Book"],
+    ["http://vivoweb.org/ontology/core#EditorialArticle", "Editorial Article"],
+    ["http://purl.org/ontology/bibo/Film", "Film"],
+    ["http://vivoweb.org/ontology/core#Newsletter", "Newsletter"],
+    ["http://vivoweb.org/ontology/core#NewsRelease", "News Release"],
+    ["http://purl.org/ontology/bibo/Patent", "Patent"],
+    ["http://purl.obolibrary.org/obo/OBI_0000272", "Protocol"],
+    ["http://purl.org/ontology/bibo/Report", "Report"],
+    ["http://vivoweb.org/ontology/core#ResearchProposal", "Research Proposal"],
+    ["http://vivoweb.org/ontology/core#Review", "Review"],
+    ["http://vivoweb.org/ontology/core#Software", "Software"],
+    ["http://vivoweb.org/ontology/core#Speech", "Speech"],
+    ["http://purl.org/ontology/bibo/Thesis", "Thesis"],
+    ["http://vivoweb.org/ontology/core#Video", "Video"],
+    ["http://purl.org/ontology/bibo/Webpage", "Webpage"],
+    ["http://purl.org/ontology/bibo/Website", "Website"],
+    ["http://vivoweb.org/ontology/core#WorkingPaper", "Working Paper"]
+</c:set>
 
 <c:set var="editjson" scope="request">
 {
@@ -237,16 +275,17 @@ SPARQL queries for existing values. --%>
     "object"    : ["authorshipUri", "${objectUriJson}", "URI" ],
     
     "n3required"    : [ "${n3ForNewAuthorship}" ],
-    
+
     "n3optional"    : [ "${n3ForExistingPub}", "${n3ForNewPub}", "${n3ForExistingVenue}",
                         "${newPubNameAssertion}", "${newPubTypeAssertion}",
                         "${n3ForNewPubDateTime}","${newPubDateTimeAssertion}","${newPubVolumeAssertion}",
                         "${newPubIssueAssertion}", "${newPubPageStartAssertion}",
                         "${newPubPageEndAssertion}", "${newPubDOIAssertion}","$existingVenueISSNAssertion" ],        
-                                                                                        
+
     "newResources"  : { "authorshipUri" : "${defaultNamespace}",
                         "pubUri" : "${defaultNamespace}",
                         "pubDateTimeUri" : "${defaultNamespace}" },
+                                                                                        
 
     "urisInScope"    : { },
     "literalsInScope": { },
@@ -269,6 +308,7 @@ SPARQL queries for existing values. --%>
          "rangeLang"        : "",
          "assertions"       : [ "${n3ForNewPub}" ]
       },   
+
       "pubDateTime" : {
          "newResource"      : "false",
          "validators"       : [ "datatype:${stringDatatypeUriJson}" ],
@@ -334,14 +374,14 @@ SPARQL queries for existing values. --%>
          "rangeDatatypeUri" : "${stringDatatypeUriJson}",
          "rangeLang"        : "",
          "assertions"       : [ "${newPubDOIAssertion}" ]
-      },      
+      }, 
       "pubType" : {
          "newResource"      : "false",
          "validators"       : [ ],
-         "optionsType"      : "VCLASSGROUP",
-         "literalOptions"   : [ "Select one" ],
+         "optionsType"      : "HARDCODED_LITERALS",
+         "literalOptions"   : [ ${publicationTypeLiteralOptions} ],
          "predicateUri"     : "",
-         "objectClassUri"   : "${publicationsClassGroupUriJson}",
+         "objectClassUri"   : "",
          "rangeDatatypeUri" : "",
          "rangeLang"        : "",
          "assertions"       : [ "${newPubTypeAssertion}" ]
@@ -357,7 +397,7 @@ SPARQL queries for existing values. --%>
          "rangeLang"        : "",         
          "assertions"       : ["${n3ForExistingPub}"]
       },
-      "pubDateTimeUri" : {
+            "pubDateTimeUri" : {
          "newResource"      : "true",
          "validators"       : [ ],
          "optionsType"      : "UNDEFINED",
@@ -400,7 +440,7 @@ SPARQL queries for existing values. --%>
          "rangeDatatypeUri" : "${stringDatatypeUriJson}",
          "rangeLang"        : "",
          "assertions"       : [ "${existingVenueISSNAssertion}" ]
-      },      
+      },    
   }
 }
 </c:set>
@@ -417,10 +457,16 @@ SPARQL queries for existing values. --%>
     editConfig.addValidator(new PersonHasPublicationValidator());
     
     Model model = (Model) application.getAttribute("jenaOntModel");
-    String objectUri = (String) request.getAttribute("objectUri");
-    editConfig.prepareForNonUpdate(model); // we're only adding new, not editing existing
+    
+    if (objectUri != null) { // editing existing (in this case, only repair is currently provided by the form)
+        editConfig.prepareForObjPropUpdate(model);
+    } else { // adding new
+        editConfig.prepareForNonUpdate(model);
+    }
+    
     // Return to person, not publication. See NIHVIVO-1464.
   	// editConfig.setEntityToReturnTo("?pubUri"); 
+    
     List<String> customJs = new ArrayList<String>(Arrays.asList(JavaScript.JQUERY_UI.path(),
                                                                 JavaScript.CUSTOM_FORM_UTILS.path(),
                                                                 "/js/browserUtils.js",
@@ -428,6 +474,7 @@ SPARQL queries for existing values. --%>
                                                                 "/edit/forms/js/addPublicationInExternalSystem.js",
                                                                 "/js/jquery_plugins/jquery.rdfquery.core-1.0.js",
                                                                 "/js/jquery_plugins/jquery.dataTables.min.js"
+                                                                
                                                                ));            
     request.setAttribute("customJs", customJs);
     
@@ -435,25 +482,40 @@ SPARQL queries for existing values. --%>
                                                                  Css.CUSTOM_FORM.path(),
                                                                  "/edit/forms/css/customFormWithAutocomplete.css",
                                                                  "/css/jquery_plugins/demo_table.css"
-                                                                ));                                                                                                                                   
+                                                                 ));                                                                                                                                   
     request.setAttribute("customCss", customCss); 
 %>
+
+<%-- Configure add vs. edit --%> 
+<c:choose>
+    <c:when test='${editMode == "add"}'>
+        <c:set var="titleVerb" value="Create" />
+        <c:set var="submitButtonText" value="Publication" />
+    </c:when>
+    <c:otherwise>
+        <c:set var="titleVerb" value="Edit" />  
+        <c:set var="submitButtonText" value="Edit Publication" />
+    </c:otherwise>
+</c:choose>
 
 <c:set var="requiredHint" value="<span class='requiredHint'> *</span>" />
 
 <jsp:include page="${preForm}" />
 
-<h2>Create publication entry for <%= subjectName %></h2>
+<% if( mode == EditMode.ERROR ){ %>
+ <div>This form is unable to handle the editing of this position because it is associated with 
+      multiple Position individuals.</div>      
+<% }else{ %>
+
+<h2>${titleVerb} publication entry for <%= subjectName %></h2>
 
 <%@ include file="unsupportedBrowserMessage.jsp" %>
 
 <%-- DO NOT CHANGE IDS, CLASSES, OR HTML STRUCTURE IN THIS FORM WITHOUT UNDERSTANDING THE IMPACT ON THE JAVASCRIPT! --%>
 <form id="addPublicationForm" class="customForm noIE67"  action="<c:url value="/edit/processRdfForm2.jsp"/>" >
 
-
     <p class="inline"><v:input type="select" label="Publication Type ${requiredHint}" name="pubType" id="typeSelector" /></p>
-    
-    
+
     <div class="fullViewOnly">
 
 
@@ -523,16 +585,14 @@ SPARQL queries for existing values. --%>
     </div>
     
     <p class="submit"><v:input type="submit" id="submit" value="Publication" cancel="true" /></p>
-
-
+    
     
     <p id="requiredLegend" class="requiredHint">* required fields</p>
 </form>
 
-<c:url var="acUrl" value="/autocomplete?tokenize=true&stem=true" />
+<c:url var="acUrl" value="/autocomplete?tokenize=true" />
 <c:url var="sparqlQueryUrl" value="/ajax/sparqlQuery" />
 <c:url var="externalLookupUrl" value="/railsext/biblio/search" />
-
 
 <%-- Must be all one line for JavaScript. --%>
 <c:set var="sparqlForAcFilter">
@@ -544,7 +604,12 @@ var customFormData  = {
     sparqlForAcFilter: '${sparqlForAcFilter}',
     sparqlQueryUrl: '${sparqlQueryUrl}',
     acUrl: '${acUrl}',
-    submitButtonTextType: 'simple'
+    submitButtonTextType: 'simple',
+    editMode: '${editMode}',
+    defaultTypeName: 'publication' // used in repair mode to generate button text
 };
 </script>
+
+<% } %>
+
 <jsp:include page="${postForm}"/>
