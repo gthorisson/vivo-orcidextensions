@@ -6,6 +6,8 @@ require 'rdf/ntriples'
 require 'pp'
 include RDF # Bring in several standard vocabularies like FOAF
 
+# Plugin for OmniAuth for handling external authentication & profile exchange
+# with a OAuth-enabled VIVO instance
 
 module OmniAuth
   module Strategies
@@ -15,7 +17,7 @@ module OmniAuth
           :access_token_path => '/railsext/oauth/access_token',
           :authorize_path => '/railsext/oauth/authorize',
           :request_token_path => '/railsext/oauth/request_token',
-          :scheme => :header, #:query_string, 
+          :scheme => :header,
           :site => 'http://vivo.crossref.org',
         }
         client_options[:authorize_path] = '/railsext/oauth/authorize' unless options[:sign_in] == false
@@ -40,29 +42,23 @@ module OmniAuth
       # Retrieve user profile info from the provider, via the OAuth::Access object
       def user_hash(access_token)
 
-        puts "in user_hash(), fetching profile data from VIVO LD store"
+        # First need the account info which includes the VIVO URI pointing to the profile
+        begin
+          # Make signed request to the OAuth API endpoint
+          response = access_token.get('/railsext/oauth/account', { 'Accept'=> 'text/json'})
+        rescue
+          puts "An error occurred when retrieving user profile: #{$!}"
+          # ToDo: proper failure-handling here, need to give useful message back to client app if things don't work out
+        end
+        puts "response from OAuth call=\n" + response.body
+        
+        
+        # Once we have the URI, we can do a straight-up Linked Data request to grab the RDF
+        # ATTN HARDCODED to static N-Triples file for now, until I sort out crazy Raptor RDF-parser bug on OS X
         profile_uri = "/Users/mummi/cvswork/vivo-orcidextensions/demoApp/n80.nt"
         profilegraph = RDF::Graph.load(profile_uri)
 
-          #response = access_token.get('/rails/api/users/profile')
-          #response = access_token.request(:get,
-          #                                'http://vivo.crossref.org/individual/n80',
-          #                                { 'Accept'=>'application/rdf+xml'})
-          #response = RestClient.get 'http://vivo.crossref.org/individual/n80', {:accept => 'text/turtle'}
-          #p "response.body="
-          #pp response.body
-          #stringio = StringIO.new response.body
-          #RDF::Reader.for(:turtle).new(stringio) do |reader|
-          #  reader.each_statement do |statement|
-          #    puts 'stmnt: ' + statement.inspect
-          #  end
-          #end
-
-          #profilegraph = RDF::Graph.load("http://vivo.crossref.org/individual/n80/n80.rdf")
-          # ATTN HARDCODED to static N-Triples file for now, until I sort out crazy Raptor RDF-parser bug on OS X
-          #profilegraph = RDF::Graph.load("/Users/mummi/cvswork/vivo-orcidextensions/demoApp/n80.nt")
-
-        # Check what we've pulled back from VIVO
+        # Let's see the list of triples we've pulled back from VIVO
         puts "Got RDF response, raw triple assertions="
         profilegraph.each_statement do |statement|
           puts 'raw stmt = ' +  statement.inspect
@@ -110,7 +106,6 @@ module OmniAuth
       #  end
       #  r
       #end
-
     end
   end
 end

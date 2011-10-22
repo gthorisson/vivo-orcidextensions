@@ -10,5 +10,5 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   provider :linked_in, 'wuMhoPkGgwUceF_btprE1PVs8odcSTGDxJDeHRwsDKfYPAjROJmTDvBcvs1hBsU3', 'BMujro7Ee-S2oA6vLbisyWvpjg9eROFuayVMu0aq2iUToCvOPR2-m9uxoqQ_i59R'  
   provider :open_id, OpenID::Store::Filesystem.new('/tmp')
   provider :vivo, 'AzwKEFNz3yePTF0XsmyvQPYBRYSvtnzKOF6TkyLL','SnJ8n17xLHwh3UsqhrQlt6NIUTkmKYsvavmoX7c1'
-  provider :orcid, 'DqaX7eXx7HkgVAOsRiFo7LL0fTncCW65HXkPU8za','2YrVj3PEq4sKUyj4Y30c4OwMPHO56UCCwjdYcnJk'
+  provider :orcid, 'e762459e-d428-4e60-9b7d-bc47ceddca92','81af0b49-6506-4c82-bbc6-e170bc15a643'
 end
