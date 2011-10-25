@@ -37,24 +37,33 @@ module OmniAuth
       def request_phase
         options[:scope] ||= 'read'
         options[:response_type] ||= 'code'
+        # think I can pass in a redirect URL like this
+        #options[:redirect_url] ||= [account page]
+
         super
       end
 
       # Retrieve profile data via the OAuth::Access object, and return as hash
       def user_data(access_token)        
 
-        access_token.options[:mode] = :query
-        access_token.options[:param_name] = 'access_token'
+        access_token.options[:mode] = :header
         
         # Make signed request to retrieve profile data as JSON
+        # ATTN the contributor ID string is hardcoded here for now
         begin
-          response = access_token.get('/9999-2411-9999-4111', :headers => {'Accept'=>'application/json'})
-          puts "Profile data as JSON=" + response.body
+          #response = access_token.get('/9999-2411-9999-4111', :headers => {'Accept'=>'application/json'})
+          response = access_token.get('/9999-2411-9999-4111', :headers => {'Accept'=>'application/json'}) do |req|
+            puts "headers="
+            pp req.headers
+          end
+          puts "Retrieved profile data as JSON=" + response.body
         rescue ::OAuth2::Error => e
           raise e.response.inspect
         end
         userhash = MultiJson.decode(response.body)
-        return userhash["profileList"]["researcherProfile"]
+        puts "userhash="
+        pp userhash
+        return userhash["profile-list"]["researcher-profile"]
       end
     end
   end
