@@ -1,6 +1,8 @@
 require 'oauth'
+
 class ClientApplication < ActiveRecord::Base
 
+  #attr_accessor :token_callback_url, :name, :support_url, :callback_url, :url
   attr_accessor :token_callback_url
   
   belongs_to :user
@@ -46,16 +48,21 @@ class ClientApplication < ActiveRecord::Base
 
   # If your application requires passing in extra parameters handle it here
   def create_request_token(params={})
-    puts "creating request token for client app"
-    p self
-    token = RequestToken.create :client_application => self, :callback_url=>self.token_callback_url
-    token.save
+    puts "creating request token for client app, w/ custom callback_url including params="
+    pp params
+    uri = URI.parse(self.callback_url)
+    uri.query = params.map { |k,v| [k, CGI.escape(v)] * "=" } * "&"
+    puts "created callback_url=" + uri.to_s
+    #token = RequestToken.create :client_application => self, :callback_url=>self.token_callback_url
+    token = RequestToken.create :client_application => self, :callback_url=>uri.to_s
     pp token    
+    token.save
     return token
     #RequestToken.create :client_application => self, :callback_url=>self.token_callback_url
   end
 
-protected
+
+  protected
 
   def generate_keys
     self.key = OAuth::Helper.generate_key(40)[0,40]

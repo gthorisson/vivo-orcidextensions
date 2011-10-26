@@ -1,13 +1,17 @@
 class RequestToken < OauthToken
 
-  attr_accessor :provided_oauth_verifier, :callback_url
+  #attr_accessible  :callback_url, :client_application
+  #attr_accessor :provided_oauth_verifier, :callback_url, :client_application
+  attr_accessor :provided_oauth_verifier
 
 
   def authorize!(user)
     return false if authorized?
+    puts "in request_token.authorize()"
     self.user = user
     self.authorized_at = Time.now
     self.verifier=OAuth::Helper.generate_key(20)[0,20] unless oauth10?
+    pp self
     self.save
   end
 

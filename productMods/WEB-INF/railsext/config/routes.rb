@@ -1,7 +1,7 @@
 VivoRailsExt::Application.routes.draw do
 
   scope "/railsext" do
-    match "/api/users/profile" => "users#show"
+    get "/oauth/account" => "users#show", :as => :account
     
     root :to => "home#index"
     

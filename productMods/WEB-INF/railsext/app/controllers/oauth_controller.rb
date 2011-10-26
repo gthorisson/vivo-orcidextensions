@@ -7,6 +7,7 @@ class OauthController < ApplicationController
   
   # Only valid users should be able to authorize & revoke access from apps
   before_filter :authenticate_user_vivo, :only => [:authorize,:revoke]
+  oauthenticate :strategies => :oauth20_request_token, :interactive => false, :only => [:access_token]
 
 
   # NB this action is inherited from the superclass and for the time behing is a 
@@ -15,28 +16,45 @@ class OauthController < ApplicationController
   
   # Determine whether user has granted app access or not, based on parameters from authorize page form
   def user_authorizes_token?
-    puts "in user_authorizes_token"
-    puts "Rails params from authz form="
-    pp params
-
-    puts "params from servlet request="
-    servlet_request_params = servlet_request.get_parameter_map()
-    pp (servlet_request_params || "")
-
-    #params[:authorize] == '1'
     return true if params[:authorize]
 
   end
+  
+
 
   def authorize
+    puts "in modded authorize(), params="
+    params[:user_email] = current_user.email
+    params[:user_uri] = current_user.uri
+    pp params
+    super
+  end
+  
+  def authorize__FF
     puts "in modded authz routine, params from authz form="
     pp params
 
-    puts "params from servlet request="
-    servlet_request_params = servlet_request.get_parameter_map()
-    pp (servlet_request_params || "")
 
-    super
+    if params[:oauth_token]
+      @token = ::RequestToken.find_by_token! params[:oauth_token]
+
+      url = URI.parse(@token.callback_url)
+      puts "\@token.callback_url=" 
+      pp url
+      url.query = params.map { |k,v| [k, CGI.escape(v)] * "=" } * "&"
+      puts "made new callback_url=" + url.to_s
+      @token.callback_url = CGI.escape(url.to_s)
+      puts "\@token in authorize()="
+      pp @token
+      oauth1_authorize
+    elsif ["code","token"].include?(params[:response_type]) # pick flow
+      send "oauth2_authorize_#{params[:response_type]}"
+    else
+      render :status=>404, :text=>"No token provided"
+    end
   end
+  
+
+  
   
 end
