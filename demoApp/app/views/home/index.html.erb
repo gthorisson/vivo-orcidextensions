@@ -7,15 +7,20 @@
 
   <% ext_authn =  current_user.authentications %>
 
-   Hello <%= current_user.email %>
-
-What would you like to do?
-
-<br /> - <%= link_to "Submit a manuscript", new_manuscript_path  %>
+<p>
+   Hello <%= current_user.email %> What would you like to do?
+</p>
 
 
 
-<br /> - <%= link_to "Register my ORCID", users_register_orcid_path( :destination => "submit_manuscript")  %>
+<%= link_to new_manuscript_path do %>
+  <h3>Submit a manuscript</h3>
+<% end %>
+
+<%= link_to users_register_orcid_path( :destination => "submit_manuscript") do %>
+  <h3>Register my ORCID</h3>
+<% end %>
+<br />
 
  <% else %>
 To do anything of interest on this demo site, you need to sign in: 

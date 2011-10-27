@@ -1,58 +1,70 @@
 require 'omniauth/oauth'
 require 'multi_json'
 
+# Plugin for OmniAuth for handling external authentication & profile exchange
+# with the mocked-up ORCID API
+
 module OmniAuth
   module Strategies
-    class Orcid < OmniAuth::Strategies::OAuth
-      def initialize(app, consumer_key=nil, consumer_secret=nil, options={}, &block)
+    class Orcid < OmniAuth::Strategies::OAuth2
+      def initialize(app, client_id=nil, client_secret=nil, options = {}, &block)
         client_options = {
-          :access_token_path => '/oauth/access_token',
-          :authorize_path => '/oauth/authorize',
-          :request_token_path => '/oauth/request_token',
-          :scheme => :header, #:query_string, 
-          :site => 'http://localhost:3001',
+          :authorize_url => '/oauth/user/authorize',
+          :token_url => '/oauth/authorize',
+          :site => 'http://localhost:8080',
         }
-        client_options[:authorize_path] = '/oauth/authorize' unless options[:sign_in] == false
-        super(app, :orcid, consumer_key, consumer_secret, client_options, options, &block)
+        super(app, :orcid, client_id, client_secret, client_options, options, &block)
       end
 
-      # Add user profile data to the OAuth parameters already in hand
+      # Add user profile data to the OAuth parameters already in hand, and return this as a standard
+      # hash which OmniAuth knows what to do with (see OmniAuth docs for details).
       def auth_hash
 
-        hash = user_hash(@access_token)
+        hash = user_data(@access_token)
         puts "got final hash with user info:"
         pp hash
 
-        puts 'Preparing hash as per OmniAuth convention and returning to caller'
+        # Preparing hash as per OmniAuth convention and returning to caller
         OmniAuth::Utils.deep_merge(
           super, {
-            'uid' => hash['cid'], # a unique user ID in this authn system
-            'user_info' => hash, # additional information about the user
+            'uid' => hash['orcid'], # The unique contributor identifier
+            'user_info' => hash,  # ORCID profile data, including protected fields
           }
         )
       end
+  
+      # Configure the kind of OAuth connection being made
+      def request_phase
+        options[:scope] ||= 'read'
+        options[:response_type] ||= 'code'
+        # think I can pass in a redirect URL like this
+        #options[:redirect_url] ||= [account page]
 
-      # Retrieve user profile info from the provider, via the OAuth::Access object
-      def user_hash(access_token)
-
-        puts "in user_hash(), fetching profile data via OAuth token"
-        puts "got access_token.params="
-        pp access_token.params
-
-        begin
-          # Make signed request to retrieve the profile data, including protected fields
-          response = access_token.get('/cid/0723-1814-6587-5983/full', { 'Accept'=>'application/json'})
-        rescue
-          puts "An error occurred when retrieving user profile: #{$!}"
-        end
-        
-        puts 'ended up with this as profile data: ' + response.body
-        
-        hash = MultiJson.decode(response.body)
-        #return hash['user']
-        return hash['profile']
+        super
       end
 
+      # Retrieve profile data via the OAuth::Access object, and return as hash
+      def user_data(access_token)        
+
+        access_token.options[:mode] = :header
+        
+        # Make signed request to retrieve profile data as JSON
+        # ATTN the contributor ID string is hardcoded here for now
+        begin
+          #response = access_token.get('/9999-2411-9999-4111', :headers => {'Accept'=>'application/json'})
+          response = access_token.get('/9999-2411-9999-4111', :headers => {'Accept'=>'application/json'}) do |req|
+            puts "headers="
+            pp req.headers
+          end
+          puts "Retrieved profile data as JSON=" + response.body
+        rescue ::OAuth2::Error => e
+          raise e.response.inspect
+        end
+        userhash = MultiJson.decode(response.body)
+        puts "userhash="
+        pp userhash
+        return userhash["profile-list"]["researcher-profile"]
+      end
     end
   end
 end

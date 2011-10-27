@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
 
+require 'pp'
   
   helper :all # include all helpers, all the time
 

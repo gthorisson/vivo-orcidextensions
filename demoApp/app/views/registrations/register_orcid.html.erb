@@ -4,20 +4,13 @@
 
 <h4>Do you already have an ORCID?</h4>
 
+
 <p>
+  <b>YES</b>  <%= link_to "Link my ORCID account with my JPC account now", "/auth/orcid?destination="+(params[:destination] || "" ) %>
+</p> 
 
-
-<b>Yes</b> =&gt;  <%= link_to "Link my ORCID account with my DemoMSapp
-			       account", "/auth/orcid?destination="+(params[:destination] || "" ) %>
- 
-
-<br />
-
-<b>No</b> =&gt; Go to the <a href="">ORCID
-  registration page</a> to sign up, then return here.
-
-<br />
-
-[I don't remember] ? <i>do we really need this?</i>
-
+<p>
+  <b>NO</b>&nbsp; <a href="http://www.orcid.org">Go to the ORCID registration page</a> to sign up, then return to this page.
 </p>
+
+
