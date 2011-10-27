@@ -26,10 +26,10 @@ class ApplicationController < ActionController::Base
     puts "Rails params from authz form:"
     pp params
 
-    puts "Session environment values:"
-    env.each do |k,v|
-      puts "   #{k} => #{v}"
-    end
+    #puts "Session environment values:"
+    #env.each do |k,v|
+    #  puts "   #{k} => #{v}"
+    #end
     
     puts "servlet request object:"
     pp servlet_request
