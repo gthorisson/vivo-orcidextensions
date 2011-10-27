@@ -42,6 +42,7 @@ module OmniAuth
 
         super
       end
+      
 
       # Retrieve profile data via the OAuth::Access object, and return as hash
       def user_data(access_token)        
@@ -51,12 +52,7 @@ module OmniAuth
         # Make signed request to retrieve profile data as JSON
         # ATTN the contributor ID string is hardcoded here for now
         begin
-          #response = access_token.get('/9999-2411-9999-4111', :headers => {'Accept'=>'application/json'})
-          response = access_token.get('/9999-2411-9999-4111', :headers => {'Accept'=>'application/json'}) do |req|
-            puts "headers="
-            pp req.headers
-          end
-          puts "Retrieved profile data as JSON=" + response.body
+          response = access_token.get('/9999-2411-9999-4111', :headers => {'Accept'=>'application/json'})
         rescue ::OAuth2::Error => e
           raise e.response.inspect
         end

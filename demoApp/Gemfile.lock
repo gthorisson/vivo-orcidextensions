@@ -66,6 +66,8 @@ GEM
       addressable (~> 2.2.6)
       multipart-post (~> 1.1.3)
       rack (>= 1.1.0, < 2)
+    faraday-stack (0.1.3)
+      faraday (~> 0.6)
     ffi (1.0.9)
     gherkin (2.5.2)
       json (>= 1.4.6)
@@ -215,6 +217,7 @@ DEPENDENCIES
   database_cleaner
   devise
   fakeweb
+  faraday-stack
   jquery-rails (>= 1.0.12)
   nifty-generators
   oa-core
