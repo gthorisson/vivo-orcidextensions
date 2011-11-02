@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110711133413) do
+ActiveRecord::Schema.define(:version => 20111026001904) do
 
   create_table "client_applications", :force => true do |t|
     t.string   "name"
@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(:version => 20110711133413) do
     t.datetime "valid_to"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "expires_at"
   end
 
   add_index "oauth_tokens", ["token"], :name => "index_oauth_tokens_on_token", :unique => true
@@ -66,6 +67,7 @@ ActiveRecord::Schema.define(:version => 20110711133413) do
     t.string   "last_sign_in_ip"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "uri"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

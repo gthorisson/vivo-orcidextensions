@@ -3,20 +3,29 @@
 # is for OAuth requests exclusively.
 
 class UsersController < ApplicationController
-  
+
+  oauthenticate :strategies => :token
+  #oauthenticate :interactive => true, :strategies => :oauth20_request_token
+  #before_filter :oauth_required
+  #oauthenticate
+
+  # Display account information
   def show
     
-    #Error handling: if there isn't a valid authz token, then abort. at the mo this will
-    # bomb if token is not defined, but that's not very elegant..
-    #   current_token
-    #   TODO return 404 ? 
-
+    puts "In users show(), OAuth-protected."
+    pp params
     # The  token is linked to a specific user, so we retrieve that user record and render as JSON
-    user = User.find(current_token.user_id)
-    render :json => user
-
-    # FOR VIVO: this controller is *not* necessary. Profile data will be fetched directly from publicly-accessible URI
-    
+    token = current_token
+    puts "token="
+    pp token
+    #user = User.find(token.user_id)
+    user = token.user
+    pp user
+    begin
+      render :json => user
+    rescue
+      puts "Error in returning user object as JSON: #{$!}"
+    end
   end
 
 end

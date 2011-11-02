@@ -3,7 +3,7 @@ source 'http://rubygems.org'
 gem 'rails'
 
 gem "devise"
-gem "oauth-plugin", ">= 0.4.0.pre1"
+gem "oauth-plugin", ">= 0.4.0.rc2"
 gem 'nifty-generators'
 gem 'dynamic_form'
 gem 'ruby-debug'

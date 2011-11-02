@@ -7,100 +7,96 @@ class ApplicationController < ActionController::Base
   
   protect_from_forgery
 
+  def current_user=(user)
+    puts "in current_user=(), got user="
+    pp user
+    puts "NOT signing in user"
+  end
+
   def current_user
     puts "in current_user(), found @current_user="
     pp @current_user
+    puts "current_token="
+    pp current_token
     return @current_user
   end
 
   def authenticate_user_vivo
     puts "in custom authn routine for VIVO user"
-
-    puts "Rails params from authz form="
+    puts "Rails params from authz form:"
     pp params
+
+    #puts "Session environment values:"
+    #env.each do |k,v|
+    #  puts "   #{k} => #{v}"
+    #end
     
-    puts "servlet request="
+    puts "servlet request object:"
     pp servlet_request
-    puts "params from servlet request="
+    puts "params from servlet request:"
     servlet_request_params = servlet_request.getParameterMap()
     pp (servlet_request_params || "")
-
-    #return true
-    servlet_request.getSession.setAttribute("edu.cornell.mannlib.vitro.webapp.beans.DisplayMessage","[message from OAuth Rails app]")
 
     pp session
     pp servlet_request
 
-    puts "profa enum .each:"
+    puts "Testing each() call on Java Enum instance"
     
-    servlet_request.getSession.getAttributeNames.each {|i| 
-      puts i + " => " 
+    servlet_request.getSession.attribute_names.each {|i| 
+      puts "   " + i + " => " 
       pp servlet_request.getSession.getAttribute(i) 
     }
 
     puts "Full request URL=" + servlet_request.request_uri + (servlet_request.query_string|| "")
-    
 
-    session = servlet_request.getSession()
+    # Get handle into the Jena triplestore
+    daoFactory = env['fullWebappDaoFactory']
+    individualDao = daoFactory.getIndividualDao()
     
+    # Pull some information out of the Java servlet session
+    session     = servlet_request.session()    
     loginStatus = session.get_attribute("loginStatus")
+    selfEdConf  = session.get_attribute("edu.cornell.mannlib.vitro.webapp.beans.SelfEditingConfiguration")
     if loginStatus
-      puts "Got loginStatus bean asString=" + loginStatus.to_string
+      puts "Got loginStatus.toString=" + loginStatus.to_string
+      puts "Got selfEdConf.toString=" + selfEdConf.to_string
       
-      #if user_account = loginStatus.current_user
-      #  puts 'got user account'
-      #  pp user_account
-      #end
-    end
-    
-    
-    loginHandler = session.getAttribute("loginHandler")    
+      # Instantiate the user in Rails, may need to create one if it doesn't exist. This is non-trivial
+      # due to overloaded methods in Java which need special handling on the JRuby side
+      puts "very tricky, calling getCurrentUser method with session argument:"
+      vivo_user = loginStatus.java_send :getCurrentUser, [java.lang.Class.for_name("javax.servlet.http.HttpSession")], session
+      puts "Got vivo_user.toString: " + vivo_user.to_string
 
-    if loginHandler
-      puts "user.toString=" + loginHandler.toString()
+
+      # Find the profile URI associated with this account, if there is one
+      indList = selfEdConf.getAssociatedIndividuals(individualDao, vivo_user)
+      puts 'list of individuals associated with account: ' + indList.to_string
+      profile_uri = nil
+      if indList.size > 0
+        ind = indList.iterator.next()        
+        profile_uri = ind.get_uri()
+        puts "FINALLY got profile URI = #{profile_uri}"
+      end
+
       
-      if loginHandler.loginStatus == "authenticated"
-        puts "VIVO user " + loginHandler.getLoginName() + " <-- " + loginHandler.getUserURI()
-        # PROFA loginHandler.login_name og .user_uri? 
-        # return true
-        # NO need to set instance (?) variable representing the user. Elsewhere need to 
-        # implement user_signed_in? which is used elsewhere to check if user is authenticated
 
-        # Instantiate user 
-        puts "creating-or-finding Rails user w/ email=" + loginHandler.login_name
-        @current_user = User.find_by_email(loginHandler.login_name)
-        if !@current_user
-          puts "   gotta create new user"
-          @current_user = User.new(:email => loginHandler.login_name)
-          puts 'saving user record to database'
-          @current_user.save!
-           # TODO add profile URI and maybe other available info from VIVO account
-        end
-        pp @current_user
-
+      puts "creating-or-finding Rails user w/ email=" + vivo_user.email_address
+      @current_user = User.find_by_email(vivo_user.email_address)
+      if !@current_user
+        puts "User does not exist in Rails, need to create one with email="+vivo_user.email_address+", uri="+profile_uri
+        @current_user = User.new(:email => vivo_user.email_address, :uri => profile_uri)
+        @current_user.save!
       end
     else
       puts "User is not logged in, redirecting to VIVO authn form"
-      redirect_to "/authenticate?" + URI.escape("afterLogin=" + servlet_request.request_uri + "?" + (servlet_request.query_string|| ""))
-    end
-    
-    
-    #redirect_to "/people"
 
-    # IF not logged in
-      # redirect to /authenticate?afterLogin + URL back here
-    # ELSE
-      # check session attribute to determine logged-in status + whether authorizd or not?
-      # return true if all adds up
-    
-    
+      # Show flash message above the login form
+      session.setAttribute("edu.cornell.mannlib.vitro.webapp.beans.DisplayMessage", "Please log in to authorize external app to access your profile.")
+      redirect_to "/authenticate?" + URI.escape("afterLogin=" + servlet_request.request_uri + "?" + (servlet_request.query_string|| ""))
+    end    
   end
 
   alias :login_required :authenticate_user_vivo
 
-
-  # VANTAR nyjan current_user helper, til ad fa unique ID (E-mail??) fyrir VIVO notanda
-  
-  # VANTAR nyjan user_signed_in? helper
 
 end
