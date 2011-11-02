@@ -1,13 +1,17 @@
 DemoApp::Application.routes.draw do
   
-  get 'account' => 'users#show'
-  get 'account/edit' => 'users#edit'
-  #get 'profiles/new' => 'profiles#new'
-  #post 'profiles' => 'profiles#create'
-  #get 'profiles/:id' => 'profiles#show'
-  resources :profiles
-  get 'cid/:cid' => 'profiles#show_cidprofile_publiconly'
-  get 'cid/:cid/full' => 'profiles#show_cidprofile_full'
+  get 'account'         => 'users#show'
+  get 'account/edit'    => 'users#edit'
+  #resources :profiles
+  get    'profile'      => 'profiles#show'
+  get    'profile/new'  => 'profiles#new',     :as => "new_profile"
+  post   'profile'      => 'profiles#create'
+  get    'profile/edit' => 'profiles#edit',    :as => "edit_profile"
+  put    'profile'      => 'profiles#update',  :as => "update_profile"
+  delete 'profile'      => 'profiles#destroy', :as => "delete_profile"
+
+  get 'cid/:cid'        => 'profiles#show_cidprofile_publiconly'
+  get 'cid/:cid/full'   => 'profiles#show_cidprofile_full'
 
   match '/auth/:provider/callback' => 'authentications#create'
   devise_for :users, :controllers => { :registrations => 'registrations' }

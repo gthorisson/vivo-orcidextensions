@@ -24,7 +24,7 @@
  Signed in as <b><%= current_user.email %></b>
   <%= tabs_tag do |tab| %>
     <% if current_user.profile %>
-     <%= tab.profile 'My profile', profile_path(current_user.profile) %>
+     <%= tab.profile 'My profile', profile_path %>
     <% end %>
     <%= tab.account   'My account', account_path %>
     <%= tab.manuscripts   'My manuscripts', manuscripts_path %>

@@ -1,5 +1,10 @@
 
-<%= form_for @profile do |f| %>
+
+
+
+
+<%= form_for @profile, :url => update_profile_path do |f| %>
+
 
   <p>
     <%= f.label "First / Given Name" %><br />

@@ -4,8 +4,10 @@
 
 <!-- biographical info about this contributor-->
 
+<% profile = current_user.profile %>
 <p>
-<%= link_to "Edit my profile", edit_profile_path(@profile) %>
+  <%= link_to "Edit profile", edit_profile_path %>
+| <%= link_to "Delete profile", profile, :confirm => 'Are you sure you want to delete your profile?', :method => :delete, :class => "remove" %>
 </p>
 
 <table class="profileTable">

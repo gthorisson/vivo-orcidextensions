@@ -12,13 +12,16 @@ class AuthenticationsController < ApplicationController
 
     # Try to find an existing user already authenticated with this provider
     authentication = Authentication.find_by_provider_and_uid(omniauth['provider'], omniauth['uid'])  
-    if authentication  
+    if authentication
       flash[:notice] = "Signed in successfully."  
       sign_in_and_redirect(:user, authentication.user)  
 
     # Otherwise create a new authentication for the currently signed-in user  
     elsif current_user
-      current_user.authentications.create(:provider => omniauth['provider'], :uid => omniauth['uid'])  
+      current_user.authentications.create(:provider       => omniauth['provider'],
+                                          :uid            => omniauth['uid'],
+                                          :profile_uri    => omniauth['user_info']['uri'],
+                                          :profile_format => omniauth['user_info']['profile_format'])
       flash[:notice] = "Authentication successful. Your #{omniauth['provider'].titleize} ID #{omniauth['uid']} has been linked to your JPC account" 
       redirect_to account_url  
 

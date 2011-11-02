@@ -16,7 +16,10 @@
 <% if profile = current_user.profile %>
 
 <%= profile.lastname %>, <%= profile.firstname %> <%= profile.middleinitials %>
-<%= link_to "view profile", profile_path(profile) %>  | <%= link_to "edit profile", edit_profile_path(profile) %> 
+  <%= link_to "view profile", profile_path %> 
+| <%= link_to "edit profile", edit_profile_path %> 
+| <%= link_to "delete profile", profile, :confirm => 'Are you sure you want to delete your profile?', :method => :delete, :class => "remove" %>
+
 <br /><i> [if fetched from external service, need flag or link to external authn entry in profile table]</i>
 
 <% else %>
@@ -51,7 +54,6 @@ None | <%= link_to "Create my profile now", new_profile_path %>
 
   <p><strong>Connect to new service:</strong></p>
   
--list all available services NOT already linked
 <a href="/auth/vivo" class="auth_provider">
   <%= image_tag "vivo_64.png", :alt => "VIVO" %>
   VIVO

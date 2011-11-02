@@ -57,6 +57,9 @@ module OmniAuth
           raise e.response.inspect
         end
         userhash = MultiJson.decode(response.body)
+        userhash['profile-list']['researcher-profile']['uri']  = 'http://localhost:8080/9999-2411-9999-4111'
+        userhash['profile-list']['researcher-profile']['profile_format']  = 'application/json'
+
         puts "userhash="
         pp userhash
         return userhash["profile-list"]["researcher-profile"]
